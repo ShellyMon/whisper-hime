@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "nkYIW1oCB3eV0YfmDZnn4du/F+ulTj6qnIom614SlyElg8fdk63AQwX0Rn3fyaHl3g6+suk8HFb3sXRNaIplgw==",
+  "dgSpecHash": "/PzHL8c2aQznkpVpIxHZAjjFT/OA7RvZzzCW0PJjhWEL3EfrwjCBPZvh8x2v6/c2WlqSWprpWS1UV7WLbhQ1Hg==",
   "success": true,
   "projectFilePath": "D:\\whisper-hime\\whisper-hime\\whisper-hime\\whisper-hime\\whisper-hime.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\驿享\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\5.0.0\\microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\驿享\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\驿享\\.nuget\\packages\\sisters.wudilib\\0.3.0-beta1\\sisters.wudilib.0.3.0-beta1.nupkg.sha512",
+    "C:\\Users\\驿享\\.nuget\\packages\\sisters.wudilib.websocket\\0.2.1\\sisters.wudilib.websocket.0.2.1.nupkg.sha512"
+  ],
   "logs": []
 }

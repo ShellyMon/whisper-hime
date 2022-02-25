@@ -1,11 +1,135 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {}
+    "net6.0": {
+      "Microsoft.Extensions.Logging.Abstractions/5.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {}
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Sisters.WudiLib/0.3.0-beta1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
+          "Newtonsoft.Json": "13.0.1"
+        },
+        "compile": {
+          "lib/net6.0/Sisters.WudiLib.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/Sisters.WudiLib.dll": {}
+        }
+      },
+      "Sisters.WudiLib.WebSocket/0.2.1": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "Sisters.WudiLib": "0.2.0"
+        },
+        "compile": {
+          "lib/netcoreapp2.1/Sisters.WudiLib.WebSocket.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/Sisters.WudiLib.WebSocket.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Microsoft.Extensions.Logging.Abstractions/5.0.0": {
+      "sha512": "NxP6ahFcBnnSfwNBi2KH2Oz8Xl5Sm2krjId/jRR3I7teFphwiUoUeZPwTNA21EX+5PtjqmyAvKaOeBXcJjcH/w==",
+      "type": "package",
+      "path": "microsoft.extensions.logging.abstractions/5.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/net461/Microsoft.Extensions.Logging.Abstractions.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.xml",
+        "microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+        "microsoft.extensions.logging.abstractions.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
+    "Newtonsoft.Json/13.0.1": {
+      "sha512": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "type": "package",
+      "path": "newtonsoft.json/13.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/netstandard2.0/Newtonsoft.Json.dll",
+        "lib/netstandard2.0/Newtonsoft.Json.xml",
+        "newtonsoft.json.13.0.1.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "Sisters.WudiLib/0.3.0-beta1": {
+      "sha512": "c74/h0M8eaeK1BSCklX2q+i88cKzQ8FwbJ03qyg5Q1d+fcipOeSQKYp97jW7UaAE3xV/yQEsYEcTFZkjaZwvzg==",
+      "type": "package",
+      "path": "sisters.wudilib/0.3.0-beta1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/Sisters.WudiLib.dll",
+        "lib/net6.0/Sisters.WudiLib.xml",
+        "lib/netstandard2.0/Sisters.WudiLib.dll",
+        "lib/netstandard2.0/Sisters.WudiLib.xml",
+        "sisters.wudilib.0.3.0-beta1.nupkg.sha512",
+        "sisters.wudilib.nuspec"
+      ]
+    },
+    "Sisters.WudiLib.WebSocket/0.2.1": {
+      "sha512": "P1XysdRpQN/B7kb8W3lNdgo/ue1dhTmO4xt77p+UPe+XiYiW0NP4wF8flXiMNWFUOzFtONEDg1XehLR5bpKrEQ==",
+      "type": "package",
+      "path": "sisters.wudilib.websocket/0.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp2.1/Sisters.WudiLib.WebSocket.dll",
+        "lib/netcoreapp2.1/Sisters.WudiLib.WebSocket.xml",
+        "sisters.wudilib.websocket.0.2.1.nupkg.sha512",
+        "sisters.wudilib.websocket.nuspec"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "net6.0": []
+    "net6.0": [
+      "Sisters.WudiLib >= 0.3.0-beta1",
+      "Sisters.WudiLib.WebSocket >= 0.2.1"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\驿享\\.nuget\\packages\\": {},
@@ -53,6 +177,16 @@
     "frameworks": {
       "net6.0": {
         "targetAlias": "net6.0",
+        "dependencies": {
+          "Sisters.WudiLib": {
+            "target": "Package",
+            "version": "[0.3.0-beta1, )"
+          },
+          "Sisters.WudiLib.WebSocket": {
+            "target": "Package",
+            "version": "[0.2.1, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",

@@ -45,6 +45,16 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
+          "dependencies": {
+            "Sisters.WudiLib": {
+              "target": "Package",
+              "version": "[0.3.0-beta1, )"
+            },
+            "Sisters.WudiLib.WebSocket": {
+              "target": "Package",
+              "version": "[0.2.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
