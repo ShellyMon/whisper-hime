@@ -46,6 +46,18 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.Extensions.Caching.Abstractions": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.Caching.Memory": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "SauceNET": {
+              "target": "Package",
+              "version": "[1.1.1, )"
+            },
             "Sisters.WudiLib": {
               "target": "Package",
               "version": "[0.3.0-beta1, )"
