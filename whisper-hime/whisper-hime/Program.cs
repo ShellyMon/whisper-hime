@@ -13,6 +13,7 @@ IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 //消息事件
 cqWebSocketEvent.MessageEvent += async(api, e) =>
 {
+    Console.WriteLine(e.Content.Text);
     await pub.SauceAsync(api, e,0); //识图
 };
 
