@@ -9,6 +9,7 @@ var httpApiClient = new CqHttpWebSocketApiClient("ws://127.0.0.1:6700/api"); // 
 cqWebSocketEvent.ApiClient = httpApiClient;
 
 Pub pub = new Pub();
+Sauce sauce = new Sauce(pub);
 IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 //消息事件
 cqWebSocketEvent.MessageEvent += async(api, e) =>
