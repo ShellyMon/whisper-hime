@@ -7,17 +7,30 @@ using Message = Sisters.WudiLib.SendingMessage;
 var cqWebSocketEvent = new CqHttpWebSocketEvent("ws://127.0.0.1:6700/event"); // 创建 WebSocket 事件监听客户端。
 var httpApiClient = new CqHttpWebSocketApiClient("ws://127.0.0.1:6700/api"); // 创建 HTTP 通信客户端。
 cqWebSocketEvent.ApiClient = httpApiClient;
-
 Pub pub = new Pub();
 Sauce sauce = new Sauce(pub);
 IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 //消息事件
 cqWebSocketEvent.MessageEvent += async(api, e) =>
 {
+    var Stext = e.Content.Text;
     Console.WriteLine(e.Content.Text);
     await pub.SauceAsync(api, e,0); //识图
+    if (Stext.IndexOf("#测试")==0)
+    {
+        MultiDownload Down = new MultiDownload();
+        List<Task> taskList = new List<Task>();
+            Down.DownloadFile("https://i.pximg.net/img-original/img/2022/02/26/00/03/55/96519763_p0.png", @"D:\ng\cs\96519763_p0.png", 5);
+        //taskList.Add(Task.Factory.StartNew(() =>
+        //{
+        //    Down.DownloadFile("https://i.pximg.net/img-original/img/2022/03/05/00/00/23/96680243_p0.jpg", @"D:\ng\cs\96680243_p0.jpg", 5);
+        //}));
+        //taskList.Add(Task.Factory.StartNew(() =>
+        //{
+        //    Down.DownloadFile("https://i.pximg.net/img-original/img/2022/02/06/00/00/14/96029615_p0.png", @"D:\ng\cs\96029615_p0.png", 5);
+        //}));
+    }
 };
-
 //识图
 pub.SauceEvent += async (api, e) => {
     bool group = false;
