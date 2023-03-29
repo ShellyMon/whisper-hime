@@ -15,7 +15,8 @@ namespace SoraBot.Basics
         internal static async Task<LoliconApiResult<List<LoliconImageEntity>>> GetLoliconImage(string url)
         {
             var json = await HttpGetAsync(url);
-            return JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
+            var obj = JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
+            return obj ?? new();
         }
 
         internal static async Task<string> DownloadFileByAria(string url, IDictionary<string, object> options)

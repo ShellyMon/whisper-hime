@@ -119,18 +119,18 @@ namespace SoraBot.Series
 
                 var images = SetuTimeBll.GetRandomImageFromDatabase(num, tag1, tag2);
 
-                for (int i = 0; i < images.Rows.Count; i++)
+                for (int i = 0; i < images.Count; i++)
                 {
-                    var item = images.Rows[i];
+                    var item = images[i];
 
-                    var name = Path.GetFileName(item["imgUrls"].ToString());
+                    var name = Path.GetFileName(item.imgUrls);
 
                     if (string.IsNullOrEmpty(name))
                         continue;
 
                     var path = Path.Combine(Environment.CurrentDirectory, "imgs", name);
 
-                    msgNodes.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{item["pid"]}\r\n title : {item["title"]}\r\n 作者 : {item["author"]}\r\n" + SoraSegment.Image(path)));
+                    msgNodes.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path)));
                 }
 
                 var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);

@@ -8,6 +8,6 @@ namespace SoraBot.Model
 {
     internal class LoliconImageUrlsEntity
     {
-        public string Original { get; set; }
+        public string Original { get; set; } = string.Empty;
     }
 }

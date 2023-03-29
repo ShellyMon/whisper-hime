@@ -10,9 +10,7 @@ namespace SoraBot.BLL
 {
     public class SetuTimeBll
     {
-        public SetuTimeBll() { }
-
-        public static DataTable GetRandomImageFromDatabase(int num, string tag1, string tag2)
+        public static List<information> GetRandomImageFromDatabase(int num, string tag1, string tag2)
         {
             var query = DbScoped.Sugar.Queryable<information>();
 
@@ -27,11 +25,11 @@ namespace SoraBot.BLL
 
             return query.Take(num)
                 .OrderBy(x => SqlFunc.GetRandom())
-                .ToDataTable();
+                .ToList();
         }
 
-        internal static async Task<string> DownloadImageByAria(LoliconImageEntity image) {
-
+        internal static async Task<string> DownloadImageByAria(LoliconImageEntity image)
+        {
             var url = image.Urls.Original
                 .Replace("i.pixiv.cat", "i.pximg.net")
                 .Replace("i.pixiv.re", "i.pximg.net");
