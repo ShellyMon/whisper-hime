@@ -1,8 +1,6 @@
 ﻿using Aria2NET;
 using Newtonsoft.Json;
 using SoraBot.Model;
-using System.Net;
-using System.Text;
 
 namespace SoraBot.Basics
 {
