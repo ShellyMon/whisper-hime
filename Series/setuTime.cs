@@ -86,17 +86,24 @@ namespace SoraBot.Series
             var strTags = match.Groups[2].Value;
             var tags = Array.Empty<string>();
 
-            if (strTags.Contains(','))
+            if (!string.IsNullOrEmpty(strTags))
             {
-                tags = strTags.Split(',');
-            }
-            if (strTags.Contains('，'))
-            {
-                tags = strTags.Split('，');
-            }
-            else if (strTags.Contains(' '))
-            {
-                tags = strTags.Split(' ');
+                if (strTags.Contains(','))
+                {
+                    tags = strTags.Split(',');
+                }
+                if (strTags.Contains('，'))
+                {
+                    tags = strTags.Split('，');
+                }
+                else if (strTags.Contains(' '))
+                {
+                    tags = strTags.Split(' ');
+                }
+                else
+                {
+                    tags = new[] { strTags.Trim() };
+                }
             }
 
             Log.Info(nameof(setuCommand2), $"TAGS: {string.Join(',', tags)}");
