@@ -38,7 +38,7 @@ namespace SoraBot.BLL
 
             var savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
 
-            var status = await found.DownloadFileByAria(url, new Dictionary<String, Object>()
+            var status = await ImageDownloadService.DownloadFileByAria(url, new Dictionary<String, Object>()
             {
                 { "dir", System.Environment.CurrentDirectory + @"\img\"}
             });

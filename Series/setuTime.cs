@@ -28,7 +28,7 @@ namespace SoraBot.Series
         [SoraCommand(CommandExpressions = new[] { "来(\\d)?[张|份|点](?:([^\\x00-\\xff]+)?)(?:\\s?)(?:([^\\x00-\\xff]+)?)([色|涩])图" },MatchType = Sora.Enumeration.MatchType.Regex,SourceType = SourceFlag.Private)]
         public async ValueTask setuCommand1(PrivateMessageEventArgs eventArgs)
         {
-            MatchCollection mc = found.setuRegexMatches(eventArgs.Message.ToString(), eventArgs.CommandRegex[0].ToString());
+            MatchCollection mc = ImageDownloadService.setuRegexMatches(eventArgs.Message.ToString(), eventArgs.CommandRegex[0].ToString());
             GroupCollection groups = mc[0].Groups;
             DataTable RandomData = SetuTimeBll.setuTimeRandom(mc);
             if (groups[4].ToString() == "涩")
@@ -49,7 +49,7 @@ namespace SoraBot.Series
         /// <returns></returns>
         [SoraCommand(CommandExpressions = new[] { "来(\\d)?[张|份|点](?:([^\\x00-\\xff]+)?)(?:\\s?)(?:([^\\x00-\\xff]+)?)([色|涩])图" },MatchType =Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
         public async ValueTask setuCommand2(GroupMessageEventArgs eventArgs) {
-            MatchCollection mc = found.setuRegexMatches(eventArgs.Message.ToString(), eventArgs.CommandRegex[0].ToString());
+            MatchCollection mc = ImageDownloadService.setuRegexMatches(eventArgs.Message.ToString(), eventArgs.CommandRegex[0].ToString());
             GroupCollection groups = mc[0].Groups;
             var customNodes = new List<CustomNode>();
             if (groups[4].ToString() == "涩")
@@ -74,7 +74,7 @@ namespace SoraBot.Series
                 if (groups[1].ToString() != "")
                     mun = groups[1].ToString();
 
-                var imageFetchResult = await found.GetLoliconImage($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={mun}&tag={groups[2]}&tag={groups[3]}");
+                var imageFetchResult = await ImageDownloadService.GetLoliconImage($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={mun}&tag={groups[2]}&tag={groups[3]}");
 
                 if (imageFetchResult?.Data?.Count > 0)
                 {
@@ -93,7 +93,7 @@ namespace SoraBot.Series
                     {
                         var image = imageFetchResult.Data[i];
 
-                        if (downloadTasks[i].Result == "false")
+                        if (downloadTasks[i].Result != "complete")
                             continue;
 
                         string savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));

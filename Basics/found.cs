@@ -7,9 +7,10 @@ using SoraBot.Model;
 
 namespace SoraBot.Basics
 {
-    public class found
+    public class ImageDownloadService
     {
-        public found() { }
+        public ImageDownloadService() { }
+
         public static MatchCollection setuRegexMatches(string str,string Regex) {
             Regex regex = new Regex(Regex);
             return regex.Matches(str);
@@ -39,11 +40,7 @@ namespace SoraBot.Basics
             var json = await HttpGetAsync(url);
             return JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
         }
-        /// <summary>
-        /// 从HttpWebResponse对象中提取响应的数据转换为字符串
-        /// </summary>
-        /// <param name="webresponse"></param>
-        /// <returns></returns>
+
         public static string GetResponseString(HttpWebResponse webresponse)
         {
             using (Stream s = webresponse.GetResponseStream())
@@ -57,20 +54,20 @@ namespace SoraBot.Basics
         {
             var aria = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
 
-            var tasks = await aria.AddUriAsync(new List<string> { url }, options);
+            var task = await aria.AddUriAsync(new List<string> { url }, options);
 
             string status;
 
             while (true)
             {
-                var cs = await aria.TellStatusAsync(tasks);
+                var cs = await aria.TellStatusAsync(task);
                 status = cs.Status;
 
-                if (cs.Status == "complete")
+                if (status == "complete")
                 {
                     break;
                 }
-                else if (cs.Status == "error")
+                else if (status == "error")
                 {
                     break;
                 }
