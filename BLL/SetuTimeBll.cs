@@ -20,16 +20,25 @@ namespace SoraBot.BLL
     public class SetuTimeBll
     {
         public SetuTimeBll() { }
-        public static DataTable setuTimeRandom(MatchCollection mc) {
-            GroupCollection groups = mc[0].Groups;
-            string tag1 = groups[2].ToString();
-            string tag2 = groups[3].ToString();
-            return DbScoped.Sugar.Queryable<information>()
-            .Where(it => it.tags.Contains(tag1) && it.tags.Contains(tag2))
-            .Take(int.Parse(groups[1].ToString()))
-            .OrderBy(st => SqlFunc.GetRandom())
-            .ToDataTable();
+
+        public static DataTable GetRandomImageFromDatabase(int num, string tag1, string tag2)
+        {
+            var query = DbScoped.Sugar.Queryable<information>();
+
+            if (!string.IsNullOrEmpty(tag1))
+            {
+                query = query.Where(x => x.tags.Contains(tag1));
+            }
+            if (!string.IsNullOrEmpty(tag2))
+            {
+                query = query.Where(x => x.tags.Contains(tag2));
+            }
+
+            return query.Take(num)
+                .OrderBy(x => SqlFunc.GetRandom())
+                .ToDataTable();
         }
+
         internal static async Task<string> DownloadImageByAria(LoliconImageEntity image) {
 
             var url = image.Urls.Original
