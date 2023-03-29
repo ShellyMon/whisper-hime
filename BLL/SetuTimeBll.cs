@@ -1,19 +1,10 @@
-﻿using SqlSugar.IOC;
-using SqlSugar;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using SoraBot.Model;
-using Newtonsoft.Json.Linq;
-using SoraBot.Basics;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
+using SoraBot.Basics;
+using SoraBot.Model;
+using SqlSugar;
+using SqlSugar.IOC;
+using System.Data;
 
 namespace SoraBot.BLL
 {
