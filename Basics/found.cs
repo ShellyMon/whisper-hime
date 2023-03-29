@@ -20,15 +20,6 @@ namespace SoraBot.Basics
             return JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
         }
 
-        internal static string GetResponseString(HttpWebResponse webresponse)
-        {
-            using (Stream s = webresponse.GetResponseStream())
-            {
-                StreamReader reader = new StreamReader(s, Encoding.UTF8);
-                return reader.ReadToEnd();
-            }
-        }
-
         internal static async Task<string> DownloadFileByAria(string url, IDictionary<string, object> options)
         {
             var aria = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
