@@ -2,6 +2,9 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using Aria2NET;
+using Newtonsoft.Json;
+using SoraBot.Model;
+
 namespace SoraBot.Basics
 {
     public class found
@@ -26,6 +29,16 @@ namespace SoraBot.Basics
             request.Accept = "zh-CN,zh;";
             return request.GetResponse() as HttpWebResponse;
         }
+        public static async Task<string> HttpGetAsync(string url)
+        {
+            var client = new HttpClient();
+            return await client.GetStringAsync(url);
+        }
+        internal static async Task<LoliconApiResult<List<LoliconImageEntity>>> GetLoliconImage(string url)
+        {
+            var json = await HttpGetAsync(url);
+            return JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
+        }
         /// <summary>
         /// 从HttpWebResponse对象中提取响应的数据转换为字符串
         /// </summary>
@@ -39,33 +52,31 @@ namespace SoraBot.Basics
                 return reader.ReadToEnd();
             }
         }
-        public static async Task<string> aria(string Imgurl, Dictionary<string, object> options)
-        {
-            var client = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
-            var result = await client.AddUriAsync(new List<String> { Imgurl }, options);
-            bool Status = true;
-            string msg = "";
-            while (Status)
-            {
-                var res = await client.TellStatusAsync(result);
-                if (res.Status == "complete")
-                {
-                    //下载成功
-                    Status = false;
-                }
-                else if (res.Status == "active")
-                {
-                    //下载中
-                }
-                else if (res.Status == "error")
-                {
-                    //下载失败
-                    Status = false;
-                }
-                msg = res.Status;
-            }
-            return msg;
 
+        public static async Task<string> DownloadFileByAria(string url, IDictionary<string, object> options)
+        {
+            var aria = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
+
+            var tasks = await aria.AddUriAsync(new List<string> { url }, options);
+
+            string status;
+
+            while (true)
+            {
+                var cs = await aria.TellStatusAsync(tasks);
+                status = cs.Status;
+
+                if (cs.Status == "complete")
+                {
+                    break;
+                }
+                else if (cs.Status == "error")
+                {
+                    break;
+                }
+            }
+
+            return status;
         }
     }
 }

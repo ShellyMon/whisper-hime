@@ -13,6 +13,7 @@ using SoraBot.Basics;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SoraBot.BLL
 {
@@ -29,23 +30,28 @@ namespace SoraBot.BLL
             .OrderBy(st => SqlFunc.GetRandom())
             .ToDataTable();
         }
-        public static async Task<string> ReciveMsg(JToken listss) {
+        internal static async Task<string> DownloadImageByAria(LoliconImageEntity image) {
 
-            string tags = listss["tags"].ToString().Replace("\r\n", "");
-            string httpUrl = listss["urls"]["original"].ToString().Replace("i.pixiv.cat", "i.pximg.net").Replace("i.pixiv.re", "i.pximg.net");
-            string saveUrl = System.Environment.CurrentDirectory + @"\img\" + System.IO.Path.GetFileName(httpUrl);
-            var cc = await found.aria(httpUrl, new Dictionary<String, Object>()
+            var url = image.Urls.Original
+                .Replace("i.pixiv.cat", "i.pximg.net")
+                .Replace("i.pixiv.re", "i.pximg.net");
+
+            var savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
+
+            var status = await found.DownloadFileByAria(url, new Dictionary<String, Object>()
             {
                 { "dir", System.Environment.CurrentDirectory + @"\img\"}
             });
-            if (Directory.Exists(saveUrl))
+
+            if (File.Exists(savePath))
             {
-                using (var image = SixLabors.ImageSharp.Image.Load(saveUrl))
+                using (var imgObj = SixLabors.ImageSharp.Image.Load(savePath))
                 {
-                    image.Save(saveUrl, new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 });
+                    imgObj.Save(savePath, new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 });
                 }
             }
-            return cc;
+
+            return status;
         }
     }
 }

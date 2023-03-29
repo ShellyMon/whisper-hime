@@ -70,42 +70,48 @@ namespace SoraBot.Series
             else//在线图库
             {
                 string mun = "1";
+
                 if (groups[1].ToString() != "")
                     mun = groups[1].ToString();
-                string gettext = found.GetResponseString(found.CreateGetHttpResponse($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={mun}&tag={groups[2]}&tag={groups[3]}"));
-                JObject list = JObject.Parse(gettext);
-                if (list["data"].ToString() == "[]")
+
+                var imageFetchResult = await found.GetLoliconImage($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={mun}&tag={groups[2]}&tag={groups[3]}");
+
+                if (imageFetchResult?.Data?.Count > 0)
                 {
-                    await eventArgs.SourceGroup.SendGroupMessage("未检索成功");
-                    return;
-                }
-                else
-                {
-                    List<Task<string>> thread = new List<Task<string>>();
-                    var customNodes2 = new List<CustomNode>();
-                    foreach (var listss in list["data"])
+                    var downloadTasks = new List<Task<string>>();
+
+                    foreach (var e in imageFetchResult.Data)
                     {
-                        thread.Add(SetuTimeBll.ReciveMsg(listss));
+                        downloadTasks.Add(SetuTimeBll.DownloadImageByAria(e));
                     }
-                    Task.WaitAll(thread.ToArray());
-                    if (thread[0].Result == "error")
+
+                    Task.WaitAll(downloadTasks.ToArray());
+
+                    var msgNodes = new List<CustomNode>();
+
+                    for (int i = 0; i < imageFetchResult.Data.Count; i++)
                     {
-                        await eventArgs.SourceGroup.SendGroupMessage(eventArgs.Sender.At()+ "未检索成功");
-                        return;
+                        var image = imageFetchResult.Data[i];
+
+                        if (downloadTasks[i].Result == "false")
+                            continue;
+
+                        string savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
+
+                        msgNodes.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(savePath)));
                     }
-                    for (int i = 0; i < list["data"].Count(); i++)
-                    {
-                        var cd = list["data"][i];
-                        if (thread[i].Result == "false")
-                            break;
-                        string saveUrl = System.Environment.CurrentDirectory + @"\img\" + System.IO.Path.GetFileName(cd["urls"]["original"].ToString());
-                        customNodes2.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{cd["pid"].ToString()}\r\n title : {cd["title"].ToString()}\r\n 作者 : {cd["author"].ToString()}\r\n" + SoraSegment.Image(saveUrl)));
-                    }
-                    var a = await eventArgs.SourceGroup.SendGroupForwardMsg(customNodes2);
-                    if (a.apiStatus.ApiMessage == "timeout")
+
+                    var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
+
+                    if (status.ApiMessage == "timeout")
                     {
                         await eventArgs.SourceGroup.SendGroupMessage("合并转发(群)消息发送失败");
                     }
+                }
+                else
+                {
+                    await eventArgs.SourceGroup.SendGroupMessage("未检索成功");
+                    return;
                 }
             }
         }
