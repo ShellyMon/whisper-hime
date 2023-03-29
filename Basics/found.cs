@@ -19,7 +19,7 @@ namespace SoraBot.Basics
         public static HttpWebResponse CreateGetHttpResponse(string url)
         {
             Thread.Sleep(20);
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            var request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "GET";
             request.ContentType = "application/x-www-form-urlencoded";//链接类型
             //"Accept-Language": "zh-CN,zh;"
