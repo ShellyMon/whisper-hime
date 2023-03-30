@@ -154,6 +154,12 @@ namespace SoraBot.Series
                         msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
                     }
 
+                    if (msgNodes.Count == 0)
+                    {
+                        await eventArgs.SourceGroup.SendGroupMessage("没有找到图片");
+                        return;
+                    }
+
                     var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
 
                     if (status.RetCode != ApiStatusType.Ok)
