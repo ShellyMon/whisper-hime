@@ -4,6 +4,8 @@ using SoraBot.Basics;
 using SoraBot.Model;
 using SqlSugar;
 using SqlSugar.IOC;
+using System.IO.Compression;
+using YukariToolBox.LightLog;
 
 namespace SoraBot.BLL
 {
@@ -56,12 +58,16 @@ namespace SoraBot.BLL
 
             if (File.Exists(fullPath))
             {
+                Log.Info(nameof(DownloadImageByAriaAsync), $"Recompress image: {fullPath}");
+
                 // 重新压缩图片，改变HASH
                 using (var imgObj = await Image.LoadAsync(fullPath))
                 {
-                    var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 };
+                    var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.BestSpeed };
                     await imgObj.SaveAsync(fullPath, encoder);
                 }
+
+                Log.Info(nameof(DownloadImageByAriaAsync), $"Finished");
 
                 return fullPath;
             }

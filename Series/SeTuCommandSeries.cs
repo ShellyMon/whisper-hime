@@ -151,6 +151,11 @@ namespace SoraBot.Series
                         if (!File.Exists(path))
                             continue;
 
+                        // 图片太大了，发不了
+                        var size = new FileInfo(path).Length;
+                        if (size >= 25 * 1024 * 1024)
+                            continue;
+
                         msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
                     }
 

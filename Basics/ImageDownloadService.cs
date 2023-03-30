@@ -1,6 +1,7 @@
 ﻿using Aria2NET;
 using Newtonsoft.Json;
 using SoraBot.Model;
+using YukariToolBox.LightLog;
 
 namespace SoraBot.Basics
 {
@@ -29,6 +30,8 @@ namespace SoraBot.Basics
 
         internal static async Task<string> DownloadFileByAriaAsync(string url, IDictionary<string, object> options)
         {
+            Log.Info(nameof(DownloadFileByAriaAsync), $"Starting download file: {url}");
+
             var task = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 
             string status;
@@ -49,6 +52,8 @@ namespace SoraBot.Basics
 
                 await Task.Delay(500);
             }
+
+            Log.Info(nameof(DownloadFileByAriaAsync), $"Status: {status}");
 
             return status;
         }
