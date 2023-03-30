@@ -27,7 +27,7 @@ namespace SoraBot.Basics
             return obj ?? new();
         }
 
-        internal static async Task<string> DownloadFileByAria(string url, IDictionary<string, object> options)
+        internal static async Task<string> DownloadFileByAriaAsync(string url, IDictionary<string, object> options)
         {
             var task = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 

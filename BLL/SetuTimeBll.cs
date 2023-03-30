@@ -27,7 +27,7 @@ namespace SoraBot.BLL
                 .ToList();
         }
 
-        internal static async Task<string> DownloadImageByAria(LoliconImageEntity image)
+        internal static async Task<string> DownloadImageByAriaAsync(LoliconImageEntity image)
         {
             var url = image.Urls.Original
                 .Replace("i.pixiv.cat", "i.pximg.net")
@@ -42,7 +42,12 @@ namespace SoraBot.BLL
                 { "out", saveName },
             };
 
-            var status = await ImageDownloadService.DownloadFileByAria(url, options);
+            var status = await ImageDownloadService.DownloadFileByAriaAsync(url, options);
+
+            if (status != "complete")
+            {
+                return string.Empty;
+            }
 
             var fullPath = Path.Combine(saveDirPath, saveName);
 
@@ -56,7 +61,7 @@ namespace SoraBot.BLL
                 }
             }
 
-            return status;
+            return fullPath;
         }
     }
 }

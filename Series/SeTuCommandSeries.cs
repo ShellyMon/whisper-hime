@@ -2,6 +2,7 @@
 using Sora.Entities.Segment;
 using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration;
+using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
@@ -108,9 +109,9 @@ namespace SoraBot.Series
 
                 var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
 
-                if (status.ApiMessage == "timeout")
+                if (status.RetCode != ApiStatusType.Ok)
                 {
-                    await eventArgs.SourceGroup.SendGroupMessage("合并转发(群)消息发送失败");
+                    await eventArgs.SourceGroup.SendGroupMessage("消息发送失败");
                 }
             }
             else
@@ -131,9 +132,9 @@ namespace SoraBot.Series
                 {
                     var downloadTasks = new List<Task<string>>();
 
-                    foreach (var e in imageFetchResult.Data)
+                    for (var i = 0; i < imageFetchResult.Data.Count; i++)
                     {
-                        downloadTasks.Add(SetuTimeBll.DownloadImageByAria(e));
+                        downloadTasks.Add(SetuTimeBll.DownloadImageByAriaAsync(imageFetchResult.Data[i]));
                     }
 
                     Task.WaitAll(downloadTasks.ToArray());
@@ -143,26 +144,26 @@ namespace SoraBot.Series
                     for (int i = 0; i < imageFetchResult.Data.Count; i++)
                     {
                         var image = imageFetchResult.Data[i];
+                        var path = downloadTasks[i].Result;
 
-                        if (downloadTasks[i].Result != "complete")
+                        if (string.IsNullOrEmpty(path))
+                            continue;
+                        if (!File.Exists(path))
                             continue;
 
-                        string savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
-
-                        msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(savePath)));
+                        msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
                     }
 
                     var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
 
-                    if (status.ApiMessage == "timeout")
+                    if (status.RetCode != ApiStatusType.Ok)
                     {
-                        await eventArgs.SourceGroup.SendGroupMessage("合并转发(群)消息发送失败");
+                        await eventArgs.SourceGroup.SendGroupMessage("消息发送失败");
                     }
                 }
                 else
                 {
-                    await eventArgs.SourceGroup.SendGroupMessage("未检索成功");
-                    return;
+                    await eventArgs.SourceGroup.SendGroupMessage("没有找到图片");
                 }
             }
         }
