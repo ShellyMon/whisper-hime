@@ -6,6 +6,7 @@ using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
+using SoraBot.Tools;
 using System.Text;
 using YukariToolBox.LightLog;
 
@@ -53,7 +54,7 @@ namespace SoraBot.Series
             }
             else if (!int.TryParse(strNum, out num))
             {
-                num = ParseChineseNumber(strNum);
+                num = Util.ParseChineseNumber(strNum);
             }
 
             if (num < 1)
@@ -187,21 +188,5 @@ namespace SoraBot.Series
             }
         }
 
-        private static int ParseChineseNumber(string text)
-        {
-            return text switch
-            {
-                "一" or "壹" => 1,
-                "二" or "貳" or "两" or "俩" => 2,
-                "三" or "叁" or "几" => 3,
-                "四" or "肆" => 4,
-                "五" or "伍" => 5,
-                "六" or "陸" => 6,
-                "七" or "柒" => 7,
-                "八" or "捌" => 8,
-                // 其它情況返回零不作处理
-                _ => 0
-            };
-        }
     }
 }
