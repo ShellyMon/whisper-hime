@@ -103,7 +103,7 @@ namespace SoraBot.Series
 
                     var path = Path.Combine(Environment.CurrentDirectory, "imgs", name);
 
-                    msgNodes.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path)));
+                    msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path)));
                 }
 
                 var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
@@ -149,7 +149,7 @@ namespace SoraBot.Series
 
                         string savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
 
-                        msgNodes.Add(new CustomNode("涩图人", eventArgs.Sender, $"www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(savePath)));
+                        msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(savePath)));
                     }
 
                     var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);

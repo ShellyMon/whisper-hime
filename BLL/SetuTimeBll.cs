@@ -4,7 +4,6 @@ using SoraBot.Basics;
 using SoraBot.Model;
 using SqlSugar;
 using SqlSugar.IOC;
-using System.Data;
 
 namespace SoraBot.BLL
 {
@@ -23,8 +22,8 @@ namespace SoraBot.BLL
                 query = query.Where(x => x.tags.Contains(tag2));
             }
 
-            return query.Take(num)
-                .OrderBy(x => SqlFunc.GetRandom())
+            return query.OrderBy(x => SqlFunc.GetRandom())
+                .Take(num)
                 .ToList();
         }
 
@@ -34,18 +33,20 @@ namespace SoraBot.BLL
                 .Replace("i.pixiv.cat", "i.pximg.net")
                 .Replace("i.pixiv.re", "i.pximg.net");
 
-            var savePath = Path.Combine(Environment.CurrentDirectory, "img", Path.GetFileName(image.Urls.Original));
+            var savePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img", Path.GetFileName(image.Urls.Original));
 
-            var status = await ImageDownloadService.DownloadFileByAria(url, new Dictionary<String, Object>()
+            var options = new Dictionary<string, object>()
             {
-                { "dir", System.Environment.CurrentDirectory + @"\img\"}
-            });
+                { "dir", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img") }
+            };
+
+            var status = await ImageDownloadService.DownloadFileByAria(url, options);
 
             if (File.Exists(savePath))
             {
-                using (var imgObj = SixLabors.ImageSharp.Image.Load(savePath))
+                using (var imgObj = Image.Load(savePath))
                 {
-                    imgObj.Save(savePath, new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 });
+                    await imgObj.SaveAsync(savePath, new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 });
                 }
             }
 

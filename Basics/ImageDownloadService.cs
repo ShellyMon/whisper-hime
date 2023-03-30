@@ -4,12 +4,20 @@ using SoraBot.Model;
 
 namespace SoraBot.Basics
 {
-    public class ImageDownloadService
+    internal class ImageDownloadService
     {
+        private static HttpClient _httpClient;
+        private static Aria2NetClient _ariaClient;
+
+        static ImageDownloadService()
+        {
+            _httpClient = new HttpClient();
+            _ariaClient = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
+        }
+
         internal static async Task<string> HttpGetAsync(string url)
         {
-            var client = new HttpClient();
-            return await client.GetStringAsync(url);
+            return await _httpClient.GetStringAsync(url);
         }
 
         internal static async Task<LoliconApiResult<List<LoliconImageEntity>>> GetLoliconImage(string url)
@@ -21,15 +29,13 @@ namespace SoraBot.Basics
 
         internal static async Task<string> DownloadFileByAria(string url, IDictionary<string, object> options)
         {
-            var aria = new Aria2NetClient("http://127.0.0.1:6800/jsonrpc");
-
-            var task = await aria.AddUriAsync(new List<string> { url }, options);
+            var task = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 
             string status;
 
             while (true)
             {
-                var cs = await aria.TellStatusAsync(task);
+                var cs = await _ariaClient.TellStatusAsync(task);
                 status = cs.Status;
 
                 if (status == "complete")
@@ -40,6 +46,8 @@ namespace SoraBot.Basics
                 {
                     break;
                 }
+
+                await Task.Delay(500);
             }
 
             return status;
