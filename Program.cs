@@ -32,6 +32,7 @@ Log.LogConfiguration
 ISoraService service = SoraServiceFactory.CreateService(new ClientConfig
 {
     CommandExceptionHandle = CommandExceptionHandle,
+    ApiTimeOut = TimeSpan.FromSeconds(30),
 });
 
 //exception 为指令执行抛出的异常
