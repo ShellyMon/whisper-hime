@@ -102,7 +102,15 @@ namespace SoraBot.Series
                     if (string.IsNullOrEmpty(name))
                         continue;
 
-                    var path = Path.Combine(Environment.CurrentDirectory, "imgs", name);
+                    var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", name);
+
+                    if (!File.Exists(path))
+                        continue;
+
+                    // 图片太大了，发不了
+                    var size = new FileInfo(path).Length;
+                    if (size >= 25 * 1024 * 1024)
+                        continue;
 
                     msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path)));
                 }

@@ -35,7 +35,7 @@ namespace SoraBot.BLL
                 .Replace("i.pixiv.cat", "i.pximg.net")
                 .Replace("i.pixiv.re", "i.pximg.net");
 
-            var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img");
+            var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-cache");
             var saveName = Path.GetFileName(image.Urls.Original);
             var fullPath = Path.Combine(saveDirPath, saveName);
 
