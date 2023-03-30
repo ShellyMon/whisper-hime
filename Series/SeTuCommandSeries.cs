@@ -1,35 +1,20 @@
 ﻿using Sora.Attributes.Command;
 using Sora.Entities.Segment;
+using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration;
 using Sora.EventArgs.SoraEvent;
-using SoraBot.Model;
-using SqlSugar;
-using SqlSugar.IOC;
-using System.Data;
-using System.Text.RegularExpressions;
 using SoraBot.Basics;
 using SoraBot.BLL;
-using Sora.Entities.Segment.DataModel;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.Security.Cryptography;
-using System.Threading;
 using System.Text;
-using System.Diagnostics;
 using YukariToolBox.LightLog;
 
 namespace SoraBot.Series
 {
     [CommandSeries]
-    public class setuTime
+    public class SeTuCommandSeries
     {
-        /// <summary>
-        /// 私聊
-        /// </summary>
-        /// <param name="eventArgs"></param>
-        /// <returns></returns>
         [SoraCommand(CommandExpressions = new[] { "来(\\d)?[张|份|点](?:([^\\x00-\\xff]+)?)(?:\\s?)(?:([^\\x00-\\xff]+)?)([色|涩])图" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private)]
-        public async ValueTask setuCommand1(PrivateMessageEventArgs eventArgs)
+        public async ValueTask PrivateGetSeSeImage(PrivateMessageEventArgs eventArgs)
         {
             //MatchCollection mc = ImageDownloadService.setuRegexMatches(eventArgs.Message.ToString(), eventArgs.CommandRegex[0].ToString());
             //GroupCollection groups = mc[0].Groups;
@@ -44,13 +29,9 @@ namespace SoraBot.Series
             //    }
             //}
         }
-        /// <summary>
-        /// 群聊
-        /// </summary>
-        /// <param name="eventArgs"></param>
-        /// <returns></returns>
+
         [SoraCommand(CommandExpressions = new[] { "^来([\\d|一|二|两|俩|三|四|五|六|七|八|九|十|几]*)[点|张|份](.*?)([色|涩])图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
-        public async ValueTask setuCommand2(GroupMessageEventArgs eventArgs)
+        public async ValueTask GroupGetSeTu(GroupMessageEventArgs eventArgs)
         {
             var regex = eventArgs.CommandRegex[0];
             var match = regex.Match(eventArgs.Message.ToString());
@@ -80,7 +61,7 @@ namespace SoraBot.Series
                 return;
             }
 
-            Log.Info(nameof(setuCommand2), $"数量: {num}");
+            Log.Info(nameof(GroupGetSeTu), $"数量: {num}");
 
             // 解析TAG
             var strTags = match.Groups[2].Value;
@@ -88,25 +69,10 @@ namespace SoraBot.Series
 
             if (!string.IsNullOrEmpty(strTags))
             {
-                if (strTags.Contains(','))
-                {
-                    tags = strTags.Split(',');
-                }
-                if (strTags.Contains('，'))
-                {
-                    tags = strTags.Split('，');
-                }
-                else if (strTags.Contains(' '))
-                {
-                    tags = strTags.Split(' ');
-                }
-                else
-                {
-                    tags = new[] { strTags.Trim() };
-                }
+                tags = SegmenterService.Analyze(strTags);
             }
 
-            Log.Info(nameof(setuCommand2), $"TAGS: {string.Join(',', tags)}");
+            Log.Info(nameof(GroupGetSeTu), $"TAGS: {string.Join(',', tags)}");
 
             if (tags.Length > 2)
             {
