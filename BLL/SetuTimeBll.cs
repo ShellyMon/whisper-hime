@@ -33,20 +33,26 @@ namespace SoraBot.BLL
                 .Replace("i.pixiv.cat", "i.pximg.net")
                 .Replace("i.pixiv.re", "i.pximg.net");
 
-            var savePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img", Path.GetFileName(image.Urls.Original));
+            var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img");
+            var saveName = Path.GetFileName(image.Urls.Original);
 
             var options = new Dictionary<string, object>()
             {
-                { "dir", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img") }
+                { "dir", saveDirPath },
+                { "out", saveName },
             };
 
             var status = await ImageDownloadService.DownloadFileByAria(url, options);
 
-            if (File.Exists(savePath))
+            var fullPath = Path.Combine(saveDirPath, saveName);
+
+            if (File.Exists(fullPath))
             {
-                using (var imgObj = Image.Load(savePath))
+                // 重新压缩图片，改变HASH
+                using (var imgObj = await Image.LoadAsync(fullPath))
                 {
-                    await imgObj.SaveAsync(savePath, new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 });
+                    var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 };
+                    await imgObj.SaveAsync(fullPath, encoder);
                 }
             }
 

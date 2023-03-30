@@ -6,8 +6,8 @@ namespace SoraBot.Basics
 {
     internal class ImageDownloadService
     {
-        private static HttpClient _httpClient;
-        private static Aria2NetClient _ariaClient;
+        private static readonly HttpClient _httpClient;
+        private static readonly Aria2NetClient _ariaClient;
 
         static ImageDownloadService()
         {
