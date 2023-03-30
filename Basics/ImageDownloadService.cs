@@ -32,28 +32,31 @@ namespace SoraBot.Basics
         {
             Log.Info(nameof(DownloadFileByAriaAsync), $"Starting download file: {url}");
 
-            var task = await _ariaClient.AddUriAsync(new List<string> { url }, options);
+            var gid = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 
             string status;
 
             while (true)
             {
-                var cs = await _ariaClient.TellStatusAsync(task);
+                var cs = await _ariaClient.TellStatusAsync(gid);
                 status = cs.Status;
 
                 if (status == "complete")
                 {
+                    Log.Info(nameof(DownloadFileByAriaAsync), $"Status: {status}");
                     break;
                 }
                 else if (status == "error")
                 {
+                    // 删除失败记录
+                    await _ariaClient.RemoveDownloadResultAsync(gid);
+
+                    Log.Error(nameof(DownloadFileByAriaAsync), $"Status: {status}");
                     break;
                 }
 
                 await Task.Delay(500);
             }
-
-            Log.Info(nameof(DownloadFileByAriaAsync), $"Status: {status}");
 
             return status;
         }
