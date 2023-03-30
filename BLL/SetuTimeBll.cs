@@ -35,21 +35,24 @@ namespace SoraBot.BLL
 
             var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img");
             var saveName = Path.GetFileName(image.Urls.Original);
-
-            var options = new Dictionary<string, object>()
-            {
-                { "dir", saveDirPath },
-                { "out", saveName },
-            };
-
-            var status = await ImageDownloadService.DownloadFileByAriaAsync(url, options);
-
-            if (status != "complete")
-            {
-                return string.Empty;
-            }
-
             var fullPath = Path.Combine(saveDirPath, saveName);
+
+            // 检查缓存
+            if (!File.Exists(fullPath))
+            {
+                var options = new Dictionary<string, object>()
+                {
+                    { "dir", saveDirPath },
+                    { "out", saveName },
+                };
+
+                var status = await ImageDownloadService.DownloadFileByAriaAsync(url, options);
+
+                if (status != "complete")
+                {
+                    return string.Empty;
+                }
+            }
 
             if (File.Exists(fullPath))
             {
@@ -59,9 +62,13 @@ namespace SoraBot.BLL
                     var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level9 };
                     await imgObj.SaveAsync(fullPath, encoder);
                 }
-            }
 
-            return fullPath;
+                return fullPath;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }
