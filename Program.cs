@@ -8,6 +8,8 @@ using Sora.EventArgs.SoraEvent;
 using Sora.Net.Config;
 using SoraBot.Basics;
 using SoraBot.PixivApi;
+using System;
+using System.Threading.Tasks;
 using YukariToolBox.LightLog;
 
 namespace Sora

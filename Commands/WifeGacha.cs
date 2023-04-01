@@ -4,6 +4,9 @@ using Sora.Entities.Segment;
 using Sora.Enumeration;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.BLL;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SoraBot.Commands
 {

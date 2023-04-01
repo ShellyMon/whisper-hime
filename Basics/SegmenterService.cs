@@ -1,4 +1,7 @@
 ﻿using JiebaNet.Segmenter;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace SoraBot.Basics
 {

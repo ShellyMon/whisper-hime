@@ -1,4 +1,6 @@
-﻿namespace SoraBot.Dto.Lolicon
+﻿using System.Collections.Generic;
+
+namespace SoraBot.Dto.Lolicon
 {
     internal class LoliconImage
     {

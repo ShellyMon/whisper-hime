@@ -4,6 +4,10 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SoraBot.Basics;
 using SoraBot.Entity;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SoraBot.BLL
 {

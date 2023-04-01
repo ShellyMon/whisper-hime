@@ -8,7 +8,11 @@ using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
 using SoraBot.Tools;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SoraBot.Commands
 {
