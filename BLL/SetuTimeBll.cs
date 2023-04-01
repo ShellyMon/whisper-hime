@@ -4,7 +4,6 @@ using SoraBot.Basics;
 using SoraBot.Model;
 using SqlSugar;
 using SqlSugar.IOC;
-using System.IO.Compression;
 using YukariToolBox.LightLog;
 
 namespace SoraBot.BLL
