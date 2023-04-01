@@ -19,7 +19,7 @@ namespace SoraBot.Commands
     public class SeTu
     {
         [SoraCommand(CommandExpressions = new[] { "^来([\\d|一|二|两|俩|三|四|五|六|七|八|九|十|几]*)[点|张|份](.*?)([色|涩])图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private)]
-        public static async ValueTask PrivateGetSeSeImage(PrivateMessageEventArgs ev)
+        public static async ValueTask PrivateGetSeTu(PrivateMessageEventArgs ev)
         {
             var logger = Ioc.Require<ILogger<SeTu>>();
 
