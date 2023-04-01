@@ -86,6 +86,7 @@ namespace Sora
             var bot = SoraServiceFactory.CreateService(new ClientConfig
             {
                 CommandExceptionHandle = HandleBotCommandException,
+                SendCommandErrMsg = false,
                 ApiTimeOut = TimeSpan.FromSeconds(30),
             });
 
