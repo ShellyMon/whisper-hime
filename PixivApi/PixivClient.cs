@@ -1,13 +1,14 @@
-﻿using SoraBot.Dto;
+﻿using Microsoft.Extensions.Logging;
+using SoraBot.Dto.Pixiv;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace SoraBot
+namespace SoraBot.PixivApi
 {
-    internal class PixivClient
+    public class PixivClient
     {
         private static readonly string USER_AGENT = "PixivIOSApp/7.13.4 (iOS 14.5; iPhone11,2)";
         private static readonly string REDIRECT_URI = "https://app-api.pixiv.net/web/v1/users/auth/pixiv/callback";
@@ -19,11 +20,14 @@ namespace SoraBot
         private static readonly string CLIENT_SECRET = "W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP";
         private static readonly string HASH_SECRET = "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c";
 
+        private readonly ILogger<PixivClient> _logger;
         private readonly HttpClient _httpClient;
         private AuthToken? _token;
 
-        public PixivClient()
+        public PixivClient(ILogger<PixivClient> logger)
         {
+            _logger = logger;
+
             var proxy = new WebProxy("socks5://127.0.0.1:50000");
             var clientHandler = new HttpClientHandler { Proxy = proxy };
             _httpClient = new HttpClient(clientHandler);
@@ -50,9 +54,7 @@ namespace SoraBot
 
         private static string CreateCodeChallenge(string codeVerifier)
         {
-            var hasher = SHA256.Create();
-            var digest = hasher.ComputeHash(Encoding.ASCII.GetBytes(codeVerifier));
-            hasher.Dispose();
+            var digest = SHA256.HashData(Encoding.ASCII.GetBytes(codeVerifier));
             return Convert.ToBase64String(digest).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
 
@@ -61,10 +63,8 @@ namespace SoraBot
             var time = DateTime.Now.ToString("yyyy-MM-ddThh:mm:sszzz");
             var data = time + HASH_SECRET;
 
-            var hasher = MD5.Create();
-            var digest = hasher.ComputeHash(Encoding.ASCII.GetBytes(data));
-            hasher.Dispose();
-            var hash = Convert.ToHexString(digest);
+            var digest = MD5.HashData(Encoding.ASCII.GetBytes(data));
+            var hash = Convert.ToHexString(digest).ToLower();
 
             return Tuple.Create(time, hash);
         }
@@ -106,13 +106,19 @@ namespace SoraBot
 
             var response = await _httpClient.PostAsync(AUTH_TOKEN_URL, data);
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<AuthResponse>(json);
+            var result = JsonSerializer.Deserialize<AuthResult>(json);
 
             if (result == null)
-                throw new Exception("Failed to deserialize response.");
+            {
+                _logger.LogError("Failed to deserialize response.");
+                return;
+            }
 
             if (string.IsNullOrEmpty(result.AccessToken))
+            {
+                _logger.LogError("Failed to login.");
                 return;
+            }
 
             _token = new AuthToken
             {
@@ -156,13 +162,19 @@ namespace SoraBot
 
             var response = await _httpClient.PostAsync(AUTH_TOKEN_URL, data);
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<AuthResponse>(json);
+            var result = JsonSerializer.Deserialize<AuthResult>(json);
 
             if (result == null)
-                throw new Exception("Failed to deserialize response.");
+            {
+                _logger.LogError("Failed to deserialize response.");
+                return;
+            }
 
             if (string.IsNullOrEmpty(result.AccessToken))
+            {
+                _logger.LogError("Failed to refresh token.");
                 return;
+            }
 
             _token = new AuthToken
             {

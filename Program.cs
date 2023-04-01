@@ -1,65 +1,157 @@
-﻿using Sora;
+﻿using Humanizer;
+using LiteDB;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MonkeyCache;
+using MonkeyCache.LiteDB;
 using Sora.EventArgs.SoraEvent;
-using Sora.Interfaces;
 using Sora.Net.Config;
-using Sora.Util;
-using SqlSugar.IOC;
+using SoraBot.Basics;
+using SoraBot.PixivApi;
 using YukariToolBox.LightLog;
 
-SugarIocServices.AddSqlSugar(new IocConfig()
+namespace Sora
 {
-    ConnectionString = "Server=localhost\\MSSQLSERVER01;Database=ST;Trusted_Connection=True;",//连接符字串
-    DbType = IocDbType.SqlServer,
-    IsAutoCloseConnection = true
-});
-
-SugarIocServices.ConfigurationSugar(db => {
-    db.Aop.OnLogExecuted = (sql, p) => {
-        Console.WriteLine(sql);
-    };
-});
-
-//设置log等级
-Log.LogConfiguration
-   .EnableConsoleOutput()
-   .SetLogLevel(LogLevel.Info);
-
-//实例化Sora服务
-//ISoraService service = SoraServiceFactory.CreateService(new ClientConfig({
-//CommandExceptionHandle = CommandExceptionHandle,    
-//}));
-
-ISoraService service = SoraServiceFactory.CreateService(new ClientConfig
-{
-    CommandExceptionHandle = CommandExceptionHandle,
-    ApiTimeOut = TimeSpan.FromSeconds(30),
-});
-
-//exception 为指令执行抛出的异常
-//eventArgs 是本次消息的事件上下文
-//log 为框架自动生成的错误日志
-async void CommandExceptionHandle(Exception exception, BaseMessageEventArgs eventArgs, string log)
-{
-    string msg = $"死了啦都你害的啦\r\n{log}\r\n{exception.Message}";
-    switch (eventArgs)
+    class Program
     {
-        case GroupMessageEventArgs g:
-            await g.Reply(msg);
-            break;
-        case PrivateMessageEventArgs p:
-            await p.Reply(msg);
-            break;
+        static void Main(string[] args)
+        {
+            RunAsync().Wait();
+        }
+
+        static async Task RunAsync()
+        {
+            // 打开数据库
+            var database = new LiteDatabase(new ConnectionString { Filename = "database.dat", InitialSize = 0x10000000 });
+            // 支持实体名转复数形式，使用EFCore同款方案
+            database.Mapper.ResolveCollectionName = type => type.Name.Pluralize();
+
+            // 配置缓存
+            BarrelUtils.SetBaseCachePath(AppDomain.CurrentDomain.BaseDirectory);
+            Barrel.ApplicationId = "Cache";
+
+            // 配置容器
+            Ioc.Configure(services => {
+                // 日志
+                services.AddLogging(logging => {
+                    logging.AddConsole();
+                });
+
+                // 数据库
+                services.AddSingleton<ILiteDatabase>(database);
+
+                // Pixiv
+                services.AddSingleton<PixivClient>();
+            });
+
+            // 配置Bot日志
+            Log.LogConfiguration
+               .SetLogLevel(YukariToolBox.LightLog.LogLevel.Info)
+               .AddLogService(new LogService());
+
+            // 获取logger
+            var logger = Ioc.Require<ILogger<Program>>();
+
+            // 登录Pixiv
+            try
+            {
+                await PixivLogin();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Pixiv 登录错误");
+            }
+
+            // 处理Bot命令异常
+            async void HandleBotCommandException(Exception exception, BaseMessageEventArgs eventArgs, string message)
+            {
+                logger.LogError(exception, "{message}", message);
+
+                var msg = $"报错\r\n{message}\r\n{exception.Message}";
+
+                switch (eventArgs)
+                {
+                    case GroupMessageEventArgs g:
+                        await g.Reply(msg);
+                        break;
+                    case PrivateMessageEventArgs p:
+                        await p.Reply(msg);
+                        break;
+                }
+            }
+
+            // 配置Bot
+            var bot = SoraServiceFactory.CreateService(new ClientConfig
+            {
+                CommandExceptionHandle = HandleBotCommandException,
+                ApiTimeOut = TimeSpan.FromSeconds(30),
+            });
+
+            // 启动Bot
+            logger.LogInformation("Startup");
+
+            try
+            {
+                await bot.StartService();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "BotException");
+            }
+
+            // TODO: 堵塞
+            await Task.Delay(-1);
+        }
+
+        static async Task PixivLogin()
+        {
+            var logger = Ioc.Require<ILogger<Program>>();
+            var client = Ioc.Require<PixivClient>();
+
+            logger.LogInformation("读取 Pixiv token");
+
+            var path = "pixiv_token.json";
+
+            try
+            {
+                await client.LoadTokenAsync(path);
+            }
+            catch (Exception)
+            {
+                logger.LogWarning("Pixiv token 读取失败");
+            }
+
+            if (client.IsTokenValid())
+            {
+                logger.LogInformation("Pixiv token 读取成功");
+                return;
+            }
+
+            logger.LogInformation("刷新 Pixiv token");
+
+            await client.RefreshTokenAsync();
+
+            if (client.IsTokenValid())
+            {
+                logger.LogInformation("Pixiv token 刷新成功");
+
+                await client.SaveTokenAsync(path);
+                return;
+            }
+
+            logger.LogInformation("登录 Pixiv");
+
+            await client.LoginAsync();
+
+            if (client.IsTokenValid())
+            {
+                logger.LogInformation("Pixiv 登录成功");
+
+                await client.SaveTokenAsync(path);
+                return;
+            }
+
+            logger.LogWarning("Pixiv 登录失败");
+        }
     }
 }
-
-//service.Event.OnGroupMessage += async (sender, eventArgs) => {
-//    //await eventArgs.SourceGroup.SendGroupMessage(eventArgs.Message.MessageBody);
-//    MessageBody messageBody = SoraSegment.At(eventArgs.SenderInfo.UserId);
-//    await eventArgs.SourceGroup.SendGroupMessage(messageBody);
-
-//};
-
-//启动服务并捕捉错误
-await service.StartService()
-             .RunCatch(e => Log.Error("Sora Service", Log.ErrorLogBuilder(e)));
-await Task.Delay(-1);

@@ -1,6 +1,6 @@
 ﻿using Aria2NET;
 using Newtonsoft.Json;
-using SoraBot.Model;
+using SoraBot.Dto.Lolicon;
 using YukariToolBox.LightLog;
 
 namespace SoraBot.Basics
@@ -21,10 +21,10 @@ namespace SoraBot.Basics
             return await _httpClient.GetStringAsync(url);
         }
 
-        internal static async Task<LoliconApiResult<List<LoliconImageEntity>>> GetLoliconImage(string url)
+        internal static async Task<LoliconApiResult<List<LoliconImage>>> GetLoliconImage(string url)
         {
             var json = await HttpGetAsync(url);
-            var obj = JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImageEntity>>>(json);
+            var obj = JsonConvert.DeserializeObject<LoliconApiResult<List<LoliconImage>>>(json);
             return obj ?? new();
         }
 

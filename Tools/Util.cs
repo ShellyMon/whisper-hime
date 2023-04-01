@@ -24,5 +24,11 @@ namespace SoraBot.Tools
                 _ => 0
             };
         }
+
+        internal static bool IsImageTooLarge(string path)
+        {
+            // 25 MB
+            return new FileInfo(path).Length > 0x1900000;
+        }
     }
 }

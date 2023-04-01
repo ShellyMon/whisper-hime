@@ -1,9 +1,8 @@
-﻿using PixivClient.Models;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace SoraBot.Dto
+namespace SoraBot.Dto.Pixiv
 {
-    public class IllustsResponse
+    public class IllustsResult
     {
         [JsonPropertyName("illusts")]
         public Illust[] Illusts { get; set; } = Array.Empty<Illust>();

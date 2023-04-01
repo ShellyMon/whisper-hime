@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SoraBot.Dto
+namespace SoraBot.Dto.Pixiv
 {
-    internal class AuthResponse
+    internal class AuthResult
     {
         [JsonPropertyName("has_error")]
         public bool HasError { get; set; } = false;

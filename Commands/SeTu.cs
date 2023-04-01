@@ -1,4 +1,5 @@
-﻿using Sora.Attributes.Command;
+﻿using Microsoft.Extensions.Logging;
+using Sora.Attributes.Command;
 using Sora.Entities.Segment;
 using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration;
@@ -8,29 +9,32 @@ using SoraBot.Basics;
 using SoraBot.BLL;
 using SoraBot.Tools;
 using System.Text;
-using YukariToolBox.LightLog;
 
-namespace SoraBot.Series
+namespace SoraBot.Commands
 {
+    /// <summary>
+    /// 色图
+    /// </summary>
     [CommandSeries]
-    public class SeTuCommandSeries
+    public class SeTu
     {
-        //来(\\d)?[张|份|点](?:([^\\x00-\\xff]+)?)(?:\\s?)(?:([^\\x00-\\xff]+)?)([色|涩])图
         [SoraCommand(CommandExpressions = new[] { "^来([\\d|一|二|两|俩|三|四|五|六|七|八|九|十|几]*)[点|张|份](.*?)([色|涩])图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private)]
-        public async ValueTask PrivateGetSeSeImage(PrivateMessageEventArgs eventArgs)
+        public static async ValueTask PrivateGetSeSeImage(PrivateMessageEventArgs ev)
         {
-            var regex = eventArgs.CommandRegex[0];
-            var match = regex.Match(eventArgs.Message.ToString());
+            var logger = Ioc.Require<ILogger<SeTu>>();
+
+            var regex = ev.CommandRegex[0];
+            var match = regex.Match(ev.Message.ToString());
 
             if (match.Groups.Count != 4)
             {
-                await eventArgs.Reply("命令格式错误");
+                await ev.Reply("命令格式错误");
                 return;
             }
 
             // 解析数量
             var strNum = match.Groups[1].Value;
-            var num = 0;
+            int num;
 
             if (string.IsNullOrEmpty(strNum))
             {
@@ -43,11 +47,11 @@ namespace SoraBot.Series
 
             if (num < 1)
             {
-                await eventArgs.Reply("数量输入错误");
+                await ev.Reply("数量输入错误");
                 return;
             }
 
-            Log.Info(nameof(GroupGetSeTu), $"数量: {num}");
+            logger.LogInformation("数量: {}", num);
 
             // 解析TAG
             var strTags = match.Groups[2].Value;
@@ -58,11 +62,11 @@ namespace SoraBot.Series
                 tags = SegmenterService.Analyze(strTags);
             }
 
-            Log.Info(nameof(GroupGetSeTu), $"TAGS: {string.Join(',', tags)}");
+            logger.LogInformation("TAG: {}", string.Join(',', tags));
 
             if (tags.Length > 2)
             {
-                await eventArgs.Reply("TAG最多只能两个");
+                await ev.Reply("TAG最多只能两个");
                 return;
             }
 
@@ -74,13 +78,13 @@ namespace SoraBot.Series
                 var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
                 var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
 
-                var images = SetuTimeBll.GetRandomImageFromDatabase(num, tag1, tag2);
+                var images = SeTuBll.GetRandomImageFromDatabase(num, tag1, tag2);
 
                 for (int i = 0; i < images.Count; i++)
                 {
                     var item = images[i];
 
-                    var name = Path.GetFileName(item.imgUrls);
+                    var name = Path.GetFileName(item.Url);
 
                     if (string.IsNullOrEmpty(name))
                         continue;
@@ -89,19 +93,15 @@ namespace SoraBot.Series
 
                     if (!File.Exists(path))
                         continue;
-
-                    // 图片太大了，发不了
-                    var size = new FileInfo(path).Length;
-                    if (size >= 25 * 1024 * 1024)
+                    if (Util.IsImageTooLarge(path))
                         continue;
 
-                    var (status, _) = await eventArgs.Reply($"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path));
+                    var (status, _) = await ev.Reply($"www.pixiv.net/artworks/{item.Pid}\r\n title : {item.Title}\r\n 作者 : {item.Artist}\r\n" + SoraSegment.Image(path));
 
                     if (status.RetCode != ApiStatusType.Ok)
                     {
-                        await eventArgs.Reply("消息发送失败");
+                        await ev.Reply("消息发送失败");
                     }
-
                 }
             }
             else
@@ -124,7 +124,7 @@ namespace SoraBot.Series
 
                     for (var i = 0; i < imageFetchResult.Data.Count; i++)
                     {
-                        downloadTasks.Add(SetuTimeBll.DownloadImageByAriaAsync(imageFetchResult.Data[i]));
+                        downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
                     }
 
                     Task.WaitAll(downloadTasks.ToArray());
@@ -138,45 +138,41 @@ namespace SoraBot.Series
                             continue;
                         if (!File.Exists(path))
                             continue;
-
-                        // 图片太大了，发不了
-                        var size = new FileInfo(path).Length;
-                        if (size >= 25 * 1024 * 1024)
+                        if (Util.IsImageTooLarge(path))
                             continue;
 
-
-                        var (status, _) = await eventArgs.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path));
+                        var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path));
 
                         if (status.RetCode != ApiStatusType.Ok)
                         {
-                            await eventArgs.Reply("消息发送失败");
+                            await ev.Reply("消息发送失败");
                         }
                     }
-
-                    
                 }
                 else
                 {
-                    await eventArgs.Reply("淦，老兄，你的XP好怪哦，没有找到这种图片");
+                    await ev.Reply("淦，老兄，你的XP好怪哦，没有找到这种图片");
                 }
             }
         }
 
         [SoraCommand(CommandExpressions = new[] { "^来([\\d|一|二|两|俩|三|四|五|六|七|八|九|十|几]*)[点|张|份](.*?)([色|涩])图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
-        public async ValueTask GroupGetSeTu(GroupMessageEventArgs eventArgs)
+        public static async ValueTask GroupGetSeTu(GroupMessageEventArgs ev)
         {
-            var regex = eventArgs.CommandRegex[0];
-            var match = regex.Match(eventArgs.Message.ToString());
+            var logger = Ioc.Require<ILogger<SeTu>>();
+
+            var regex = ev.CommandRegex[0];
+            var match = regex.Match(ev.Message.ToString());
 
             if (match.Groups.Count != 4)
             {
-                await eventArgs.SourceGroup.SendGroupMessage("命令格式错误");
+                await ev.SourceGroup.SendGroupMessage("命令格式错误");
                 return;
             }
 
             // 解析数量
             var strNum = match.Groups[1].Value;
-            var num = 0;
+            int num;
 
             if (string.IsNullOrEmpty(strNum))
             {
@@ -189,11 +185,11 @@ namespace SoraBot.Series
 
             if (num < 1)
             {
-                await eventArgs.SourceGroup.SendGroupMessage("数量输入错误");
+                await ev.SourceGroup.SendGroupMessage("数量输入错误");
                 return;
             }
 
-            Log.Info(nameof(GroupGetSeTu), $"数量: {num}");
+            logger.LogInformation("数量: {num}", num);
 
             // 解析TAG
             var strTags = match.Groups[2].Value;
@@ -204,11 +200,11 @@ namespace SoraBot.Series
                 tags = SegmenterService.Analyze(strTags);
             }
 
-            Log.Info(nameof(GroupGetSeTu), $"TAGS: {string.Join(',', tags)}");
+            logger.LogInformation("TAG: {}", string.Join(',', tags));
 
             if (tags.Length > 2)
             {
-                await eventArgs.SourceGroup.SendGroupMessage("TAG最多只能两个");
+                await ev.SourceGroup.SendGroupMessage("TAG最多只能两个");
                 return;
             }
 
@@ -222,13 +218,13 @@ namespace SoraBot.Series
                 var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
                 var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
 
-                var images = SetuTimeBll.GetRandomImageFromDatabase(num, tag1, tag2);
+                var images = SeTuBll.GetRandomImageFromDatabase(num, tag1, tag2);
 
                 for (int i = 0; i < images.Count; i++)
                 {
                     var item = images[i];
 
-                    var name = Path.GetFileName(item.imgUrls);
+                    var name = Path.GetFileName(item.Url);
 
                     if (string.IsNullOrEmpty(name))
                         continue;
@@ -237,20 +233,23 @@ namespace SoraBot.Series
 
                     if (!File.Exists(path))
                         continue;
-
-                    // 图片太大了，发不了
-                    var size = new FileInfo(path).Length;
-                    if (size >= 25 * 1024 * 1024)
+                    if (Util.IsImageTooLarge(path))
                         continue;
 
-                    msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"www.pixiv.net/artworks/{item.pid}\r\n title : {item.title}\r\n 作者 : {item.author}\r\n" + SoraSegment.Image(path)));
+                    msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"www.pixiv.net/artworks/{item.Pid}\r\n title : {item.Title}\r\n 作者 : {item.Artist}\r\n" + SoraSegment.Image(path)));
                 }
 
-                var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
+                if (msgNodes.Count == 0)
+                {
+                    await ev.SourceGroup.SendGroupMessage("没有找到图片");
+                    return;
+                }
+
+                var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(msgNodes);
 
                 if (status.RetCode != ApiStatusType.Ok)
                 {
-                    await eventArgs.SourceGroup.SendGroupMessage("消息发送失败");
+                    await ev.SourceGroup.SendGroupMessage("消息发送失败");
                 }
             }
             else
@@ -273,7 +272,7 @@ namespace SoraBot.Series
 
                     for (var i = 0; i < imageFetchResult.Data.Count; i++)
                     {
-                        downloadTasks.Add(SetuTimeBll.DownloadImageByAriaAsync(imageFetchResult.Data[i]));
+                        downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
                     }
 
                     Task.WaitAll(downloadTasks.ToArray());
@@ -289,34 +288,30 @@ namespace SoraBot.Series
                             continue;
                         if (!File.Exists(path))
                             continue;
-
-                        // 图片太大了，发不了
-                        var size = new FileInfo(path).Length;
-                        if (size >= 25 * 1024 * 1024)
+                        if (Util.IsImageTooLarge(path))
                             continue;
 
-                        msgNodes.Add(new CustomNode("涩图人", eventArgs.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
+                        msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
                     }
 
                     if (msgNodes.Count == 0)
                     {
-                        await eventArgs.SourceGroup.SendGroupMessage("没有找到图片");
+                        await ev.SourceGroup.SendGroupMessage("没有找到图片");
                         return;
                     }
 
-                    var (status, _, _) = await eventArgs.SourceGroup.SendGroupForwardMsg(msgNodes);
+                    var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(msgNodes);
 
                     if (status.RetCode != ApiStatusType.Ok)
                     {
-                        await eventArgs.SourceGroup.SendGroupMessage("消息发送失败");
+                        await ev.SourceGroup.SendGroupMessage("消息发送失败");
                     }
                 }
                 else
                 {
-                    await eventArgs.SourceGroup.SendGroupMessage("淦，老兄，你的XP好怪哦，没有找到这种图片");
+                    await ev.SourceGroup.SendGroupMessage("淦，老兄，你的XP好怪哦，没有找到这种图片");
                 }
             }
         }
-
     }
 }
