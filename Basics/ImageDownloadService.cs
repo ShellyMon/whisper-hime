@@ -1,7 +1,7 @@
 ﻿using Aria2NET;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SoraBot.Dto.Lolicon;
-using YukariToolBox.LightLog;
 
 namespace SoraBot.Basics
 {
@@ -30,7 +30,9 @@ namespace SoraBot.Basics
 
         internal static async Task<string> DownloadFileByAriaAsync(string url, IDictionary<string, object> options)
         {
-            Log.Info(nameof(DownloadFileByAriaAsync), $"Starting download file: {url}");
+            var logger = Ioc.Require<ILogger<ImageDownloadService>>();
+
+            logger.LogInformation("Starting download file: {}", url);
 
             var gid = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 
@@ -43,7 +45,7 @@ namespace SoraBot.Basics
 
                 if (status == "complete")
                 {
-                    Log.Info(nameof(DownloadFileByAriaAsync), $"Status: {status}");
+                    logger.LogInformation("Status: {}", status);
                     break;
                 }
                 else if (status == "error")
@@ -51,7 +53,7 @@ namespace SoraBot.Basics
                     // 删除失败记录
                     await _ariaClient.RemoveDownloadResultAsync(gid);
 
-                    Log.Error(nameof(DownloadFileByAriaAsync), $"Status: {status}");
+                    logger.LogError("Status: {}", status);
                     break;
                 }
 
