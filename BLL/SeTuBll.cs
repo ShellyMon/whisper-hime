@@ -58,6 +58,7 @@ namespace SoraBot.BLL
 
                 if (status != "complete")
                 {
+                    logger.LogError("Failed to download image.");
                     return string.Empty;
                 }
             }
@@ -79,6 +80,7 @@ namespace SoraBot.BLL
             }
             else
             {
+                logger.LogError("Missing image file.");
                 return string.Empty;
             }
         }
