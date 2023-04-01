@@ -255,11 +255,17 @@ namespace SoraBot.PixivApi
         {
             // Token无效则尝试刷新一次
             if (!IsTokenValid())
+            {
+                _logger.LogInformation("刷新 Pixiv token");
                 await RefreshTokenAsync();
+            }
 
             // 还是无效就直返回空结果
             if (!IsTokenValid())
+            {
+                _logger.LogError("Pixiv token 无效");
                 return string.Empty;
+            }
 
             var url = $"{API_URL}/{api}";
 
