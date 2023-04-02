@@ -41,7 +41,7 @@ namespace SoraBot.Commands
             if (image.MetaPages.Length > 0)
             {
                 // 多张图片
-                var tasks = new List<Task<Tuple<string, string>>>(image.MetaPages.Length);
+                var tasks = new List<Task<Tuple<string, string, object?>>>(image.MetaPages.Length);
                 var count = 0;
 
                 foreach (var page in image.MetaPages)
@@ -125,7 +125,7 @@ namespace SoraBot.Commands
             if (image.MetaPages.Length > 0)
             {
                 // 多张图片
-                var tasks = new List<Task<Tuple<string, string>>>(image.MetaPages.Length);
+                var tasks = new List<Task<Tuple<string, string, object?>>>(image.MetaPages.Length);
                 var count = 0;
 
                 foreach (var page in image.MetaPages)
@@ -184,7 +184,7 @@ namespace SoraBot.Commands
                 illusts.Add(new Illustration
                 {
                     Pid = image.Id,
-                    p= image.p,
+                    p = image.p,
                     Title = image.Title,
                     Description = image.Caption,
                     Tags = image.Tags.Select(x => x.Name).ToList(),

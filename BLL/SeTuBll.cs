@@ -42,7 +42,7 @@ namespace SoraBot.BLL
             return query.Limit(num).ToList();
         }
 
-        internal static async Task<Tuple<string, string>> DownloadPixivImageAsync(string? url)
+        internal static async Task<Tuple<string, string, object?>> DownloadPixivImageAsync(string url, object? tag = null)
         {
             var logger = Ioc.Require<ILogger<SeTuBll>>();
 
@@ -68,7 +68,7 @@ namespace SoraBot.BLL
                 if (status != "complete")
                 {
                     logger.LogError("图片下载失败");
-                    return Tuple.Create(url,"error");
+                    return Tuple.Create(url, string.Empty, tag);
                 }
             }
 
@@ -85,12 +85,12 @@ namespace SoraBot.BLL
 
                 logger.LogInformation("完成");
 
-                return Tuple.Create(url, fullPath);
+                return Tuple.Create(url, fullPath, tag);
             }
             else
             {
                 logger.LogError("文件不存在");
-                return Tuple.Create(url, string.Empty);
+                return Tuple.Create(url, string.Empty, tag);
             }
         }
     }
