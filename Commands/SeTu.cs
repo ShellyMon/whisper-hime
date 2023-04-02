@@ -303,5 +303,49 @@ namespace SoraBot.Commands
                 }
             }
         }
+
+        [SoraCommand(CommandExpressions = new[] { "^随机[色|涩]图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
+        public static async ValueTask GroupGetRandomSeTu(GroupMessageEventArgs ev)
+        {
+            var images = SeTuBll.GetRandomImageFromDatabase(1, string.Empty, string.Empty);
+
+            if (images.Count == 0)
+            {
+                await ev.Reply("没有找到图片");
+                return;
+            }
+
+            var img = images[0];
+
+            // 取文件名，这两个文件夹应该要合并
+            var fileName = Path.GetFileName(img.Url);
+
+            var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", fileName);
+
+            if (!File.Exists(filePath))
+            {
+                filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-cache", fileName);
+
+                if (!File.Exists(filePath))
+                {
+                    filePath = await SeTuBll.DownloadPixivImageAsync(img.Url);
+
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        await ev.Reply("你要找的图片失踪了");
+                        return;
+                    }
+                }
+            }
+
+            var msg = SoraSegment.At(ev.Sender)
+                    + SoraSegment.Text($"PID：{img.Pid}\n")
+                    + SoraSegment.Text($"标题：{img.Title}\n")
+                    + SoraSegment.Text($"标签：{string.Join('，', img.Tags)}\n")
+                    + SoraSegment.Text($"作者：{img.Artist}\n")
+                    + SoraSegment.Image(filePath);
+
+            await ev.Reply(msg);
+        }
     }
 }
