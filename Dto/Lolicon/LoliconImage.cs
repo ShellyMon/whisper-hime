@@ -4,7 +4,8 @@ namespace SoraBot.Dto.Lolicon
 {
     internal class LoliconImage
     {
-        public int PID { get; set; }
+        public long PID { get; set; }
+        public int p { get; set; }
         public string Title { get; set; } = string.Empty;
         public List<string> Tags { get; set; } = new();
         public int UID { get; set; }

@@ -151,6 +151,7 @@ namespace SoraBot.Commands
                     illusts.Add(new Illustration
                     {
                         Pid = image.Id,
+                        p = image.p,
                         Title = image.Title,
                         Description = image.Caption,
                         Tags = image.Tags.Select(x => x.Name).ToList(),
@@ -183,6 +184,7 @@ namespace SoraBot.Commands
                 illusts.Add(new Illustration
                 {
                     Pid = image.Id,
+                    p= image.p,
                     Title = image.Title,
                     Description = image.Caption,
                     Tags = image.Tags.Select(x => x.Name).ToList(),

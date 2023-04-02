@@ -11,7 +11,10 @@ namespace SoraBot.Entity
         /// 主键
         /// </summary>
         public int Id { get; set; }
-
+        /// <summary>
+        /// 第几张图片
+        /// </summary>
+        public int p { get; set; }
         /// <summary>
         /// 作品ID
         /// </summary>

@@ -13,6 +13,8 @@ using SoraBot.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -333,6 +335,21 @@ namespace SoraBot.Commands
 
                 if (string.IsNullOrEmpty(path.Item2))
                     continue;
+
+                if (path.Item2=="error")
+                {
+                    // 获取图片详情
+                    var imageListData = await PixivBll.GetImageByPidAsync(image.PID);
+
+                    if (imageListData == null)
+                        continue;
+                    if (imageListData.MetaPages.Count() == 0)
+                        continue;
+
+
+                    path = await SeTuBll.DownloadPixivImageAsync(imageListData.MetaPages[image.p].ImageUrls.Original);
+                }
+
                 if (!File.Exists(path.Item2))
                     continue;
                 if (Util.IsImageTooLarge(path.Item2))
@@ -366,6 +383,7 @@ namespace SoraBot.Commands
 
             Task.WaitAll(downloadTasks.ToArray());
 
+            var statusBll = true;
             for (int i = 0; i < imageFetchResult.Data.Count; i++)
             {
                 var image = imageFetchResult.Data[i];
@@ -373,10 +391,28 @@ namespace SoraBot.Commands
 
                 if (string.IsNullOrEmpty(path.Item2))
                     continue;
+                else
+                if (path.Item2=="error")
+                {
+                    // 获取图片详情
+                    var imageListData = await PixivBll.GetImageByPidAsync(image.PID);
+
+                    if (imageListData == null)
+                        continue;
+                    if (imageListData.MetaPages.Count() == 0)
+                        continue;
+
+
+                    path = await SeTuBll.DownloadPixivImageAsync(imageListData.MetaPages[image.p].ImageUrls.Original);
+                }
+                else
                 if (!File.Exists(path.Item2))
                     continue;
+                else
                 if (Util.IsImageTooLarge(path.Item2))
                     continue;
+                else
+                    statusBll= false;
 
                 var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2));
 
@@ -384,6 +420,10 @@ namespace SoraBot.Commands
                 {
                     await ev.Reply("消息发送失败");
                 }
+            }
+            if (statusBll)
+            {
+                await ev.Reply("消息发送失败");
             }
         }
 

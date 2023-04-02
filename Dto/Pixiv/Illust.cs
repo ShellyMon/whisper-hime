@@ -8,6 +8,9 @@ namespace SoraBot.Dto.Pixiv
         [JsonPropertyName("id")]
         public long Id { get; set; }
 
+        [JsonPropertyName("p")]
+        public int p { get; set; }
+
         [JsonPropertyName("title")]
         public string Title { get; set; } = string.Empty;
 
