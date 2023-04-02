@@ -280,6 +280,10 @@ namespace SoraBot.PixivApi
             request.Headers.Add("X-Client-Hash", timeHash.Item2);
 
             var response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
+
             var json = await response.Content.ReadAsStringAsync();
 
             return json;
