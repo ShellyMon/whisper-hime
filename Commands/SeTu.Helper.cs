@@ -170,7 +170,7 @@ namespace SoraBot.Commands
             }
 
             // 等待图片信息下载完成
-            await Task.WhenAll(detailTasks.Select(x => x.Item2));
+            await Task.WhenAll(detailTasks.Select(x => x.Item2).ToArray());
 
             // 这里就直接复用上面的变量了
             tasks.Clear();
