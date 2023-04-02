@@ -144,7 +144,7 @@ namespace SoraBot.Commands
             await Task.WhenAll(tasks);
 
             // 下载成功的图片
-            var downloadedImages = new List<Tuple<object, string>>(images.Data.Count);
+            var downloadedImages = new List<(object, string)>(images.Data.Count);
             // 图片信息下载列表
             var detailTasks = new List<Task<Illust?>>(images.Data.Count);
 
@@ -165,7 +165,7 @@ namespace SoraBot.Commands
                         continue;
 
                     // 添加到完成列表
-                    downloadedImages.Add(Tuple.Create((object)image, path));
+                    downloadedImages.Add((image, path));
                 }
             }
 
@@ -209,7 +209,7 @@ namespace SoraBot.Commands
                 if (Util.IsImageTooLarge(path))
                     continue;
 
-                downloadedImages.Add(Tuple.Create((object)image, path));
+                downloadedImages.Add((image, path));
             }
 
             // 构建消息

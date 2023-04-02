@@ -62,7 +62,7 @@ namespace SoraBot.PixivApi
             return Convert.ToBase64String(digest).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
 
-        private static Tuple<string, string> CreateClientTimeHash()
+        private static (string, string) CreateClientTimeHash()
         {
             var time = DateTime.Now.ToString("yyyy-MM-ddThh:mm:sszzz");
             var data = time + HASH_SECRET;
@@ -70,7 +70,7 @@ namespace SoraBot.PixivApi
             var digest = MD5.HashData(Encoding.ASCII.GetBytes(data));
             var hash = Convert.ToHexString(digest).ToLower();
 
-            return Tuple.Create(time, hash);
+            return (time, hash);
         }
 
         /// <summary>
