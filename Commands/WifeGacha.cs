@@ -4,6 +4,7 @@ using Sora.Entities.Segment;
 using Sora.Enumeration;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.BLL;
+using SoraBot.Tools;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -18,6 +19,17 @@ namespace SoraBot.Commands
     {
         [SoraCommand(CommandExpressions = new[] { "抽老婆" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
         public static async ValueTask GroupWifeGacha(GroupMessageEventArgs ev)
+        {
+            await DoWifeGachaAsync(ev);
+        }
+
+        [SoraCommand(CommandExpressions = new[] { "抽老婆" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private)]
+        public static async ValueTask PrivateWifeGacha(PrivateMessageEventArgs ev)
+        {
+            await DoWifeGachaAsync(ev);
+        }
+
+        private static async ValueTask DoWifeGachaAsync(BaseMessageEventArgs ev)
         {
             var date = Barrel.Current.Get<DateTime>($"User.WifeGachaDate.{ev.Sender.Id}");
 
