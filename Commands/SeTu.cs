@@ -117,7 +117,7 @@ namespace SoraBot.Commands
 
                 if (imageFetchResult?.Data?.Count > 0)
                 {
-                    var downloadTasks = new List<Task<string>>();
+                    var downloadTasks = new List<Task<Tuple<string, string>>>();
 
                     for (var i = 0; i < imageFetchResult.Data.Count; i++)
                     {
@@ -131,14 +131,14 @@ namespace SoraBot.Commands
                         var image = imageFetchResult.Data[i];
                         var path = downloadTasks[i].Result;
 
-                        if (string.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path.Item2))
                             continue;
-                        if (!File.Exists(path))
+                        if (!File.Exists(path.Item2))
                             continue;
-                        if (Util.IsImageTooLarge(path))
+                        if (Util.IsImageTooLarge(path.Item2))
                             continue;
 
-                        var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path));
+                        var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2));
 
                         if (status.RetCode != ApiStatusType.Ok)
                         {
@@ -258,7 +258,7 @@ namespace SoraBot.Commands
 
                 if (imageFetchResult?.Data?.Count > 0)
                 {
-                    var downloadTasks = new List<Task<string>>();
+                    var downloadTasks = new List<Task<Tuple<string, string>>>();
 
                     for (var i = 0; i < imageFetchResult.Data.Count; i++)
                     {
@@ -274,14 +274,14 @@ namespace SoraBot.Commands
                         var image = imageFetchResult.Data[i];
                         var path = downloadTasks[i].Result;
 
-                        if (string.IsNullOrEmpty(path))
+                        if (string.IsNullOrEmpty(path.Item2))
                             continue;
-                        if (!File.Exists(path))
+                        if (!File.Exists(path.Item2))
                             continue;
-                        if (Util.IsImageTooLarge(path))
+                        if (Util.IsImageTooLarge(path.Item2))
                             continue;
 
-                        msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path)));
+                        msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2)));
                     }
 
                     if (msgNodes.Count == 0)
@@ -328,7 +328,7 @@ namespace SoraBot.Commands
 
                 if (!File.Exists(filePath))
                 {
-                    filePath = await SeTuBll.DownloadPixivImageAsync(img.Url);
+                    filePath = (await SeTuBll.DownloadPixivImageAsync(img.Url)).Item2;
 
                     if (string.IsNullOrEmpty(filePath))
                     {

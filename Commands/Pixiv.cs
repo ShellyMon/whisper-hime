@@ -7,6 +7,7 @@ using SoraBot.Basics;
 using SoraBot.BLL;
 using SoraBot.Entity;
 using SoraBot.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace SoraBot.Commands
             if (image.MetaPages.Length > 0)
             {
                 // 多张图片
-                var tasks = new List<Task<string>>(image.MetaPages.Length);
+                var tasks = new List<Task<Tuple<string, string>>>(image.MetaPages.Length);
                 var count = 0;
 
                 foreach (var page in image.MetaPages)
@@ -64,9 +65,9 @@ namespace SoraBot.Commands
 
                 foreach (var path in paths)
                 {
-                    if (string.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path.Item2))
                         continue;
-                    msg += SoraSegment.Image(path);
+                    msg += SoraSegment.Image(path.Item2);
                 }
 
                 await ev.Reply(msg);
@@ -84,7 +85,7 @@ namespace SoraBot.Commands
 
                 var path = await SeTuBll.DownloadPixivImageAsync(url);
 
-                if (string.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path.Item2))
                 {
                     await ev.Reply("图片文件失踪了");
                     return;
@@ -93,7 +94,7 @@ namespace SoraBot.Commands
                 var msg = SoraSegment.Text($"标题：{image.Title}\n")
                         + SoraSegment.Text($"标签：{Util.MakeTagString(image.Tags)}\n")
                         + SoraSegment.Text($"作者：{image.User.Name}\n")
-                        + SoraSegment.Image(path);
+                        + SoraSegment.Image(path.Item2);
 
                 await ev.Reply(msg);
             }
@@ -124,7 +125,7 @@ namespace SoraBot.Commands
             if (image.MetaPages.Length > 0)
             {
                 // 多张图片
-                var tasks = new List<Task<string>>(image.MetaPages.Length);
+                var tasks = new List<Task<Tuple<string, string>>>(image.MetaPages.Length);
                 var count = 0;
 
                 foreach (var page in image.MetaPages)
@@ -144,7 +145,7 @@ namespace SoraBot.Commands
 
                 foreach (var path in paths)
                 {
-                    if (string.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(path.Item2))
                         continue;
 
                     illusts.Add(new Illustration
@@ -154,7 +155,7 @@ namespace SoraBot.Commands
                         Description = image.Caption,
                         Tags = image.Tags.Select(x => x.Name).ToList(),
                         IsAdult = image.XRestrict != 0,
-                        Url = path, // TODO 改成网址
+                        Url = path.Item1,
                         Uid = image.User.Id,
                         Artist = image.User.Name,
                     });
@@ -173,7 +174,7 @@ namespace SoraBot.Commands
 
                 var path = await SeTuBll.DownloadPixivImageAsync(url);
 
-                if (string.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path.Item2))
                 {
                     await ev.Reply("图片文件失踪了");
                     return;
