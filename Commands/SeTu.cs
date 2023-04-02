@@ -27,17 +27,10 @@ namespace SoraBot.Commands
         {
             var logger = Ioc.Require<ILogger<SeTu>>();
 
-            var regex = ev.CommandRegex[0];
-            var match = regex.Match(ev.Message.ToString());
-
-            if (match.Groups.Count != 4)
-            {
-                await ev.Reply("命令格式错误");
-                return;
-            }
+            var match = ev.CommandRegex[0].MatchResult(ev.Message.GetText());
 
             // 解析数量
-            var strNum = match.Groups[1].Value;
+            var strNum = match[1];
             int num;
 
             if (string.IsNullOrEmpty(strNum))
@@ -58,7 +51,7 @@ namespace SoraBot.Commands
             logger.LogInformation("数量: {}", num);
 
             // 解析TAG
-            var strTags = match.Groups[2].Value;
+            var strTags = match[2];
             var tags = Array.Empty<string>();
 
             if (!string.IsNullOrEmpty(strTags))
@@ -75,7 +68,7 @@ namespace SoraBot.Commands
             }
 
             // 表示图片从磁盘读取还是从网络下载
-            var sourceType = match.Groups[3].Value;
+            var sourceType = match[3];
 
             if (sourceType == "涩")
             {
@@ -165,17 +158,10 @@ namespace SoraBot.Commands
         {
             var logger = Ioc.Require<ILogger<SeTu>>();
 
-            var regex = ev.CommandRegex[0];
-            var match = regex.Match(ev.Message.ToString());
-
-            if (match.Groups.Count != 4)
-            {
-                await ev.SourceGroup.SendGroupMessage("命令格式错误");
-                return;
-            }
+            var match = ev.CommandRegex[0].MatchResult(ev.Message.GetText());
 
             // 解析数量
-            var strNum = match.Groups[1].Value;
+            var strNum = match[1];
             int num;
 
             if (string.IsNullOrEmpty(strNum))
@@ -196,7 +182,7 @@ namespace SoraBot.Commands
             logger.LogInformation("数量: {num}", num);
 
             // 解析TAG
-            var strTags = match.Groups[2].Value;
+            var strTags = match[2];
             var tags = Array.Empty<string>();
 
             if (!string.IsNullOrEmpty(strTags))
@@ -213,7 +199,7 @@ namespace SoraBot.Commands
             }
 
             // 表示图片从磁盘读取还是从网络下载
-            var sourceType = match.Groups[3].Value;
+            var sourceType = match[3];
 
             if (sourceType == "涩")
             {

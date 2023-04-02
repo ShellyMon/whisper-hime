@@ -19,10 +19,10 @@ namespace SoraBot.Commands
         public static async ValueTask GetImageByPid(PrivateMessageEventArgs ev)
         {
             // 解析参数
-            var match = ev.CommandRegex[0].Match(ev.Message.GetText());
+            var match = ev.CommandRegex[0].MatchResult(ev.Message.GetText());
 
             // 拿PID
-            var pid = long.Parse(match.Groups[1].Value);
+            var pid = long.Parse(match[1]);
             // 获取图片详情
             var image = await PixivBll.GetImageByPidAsync(pid);
 
