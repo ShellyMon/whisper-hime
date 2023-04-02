@@ -8,6 +8,7 @@ using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
 using SoraBot.Dto.Lolicon;
+using SoraBot.Dto.Pixiv;
 using SoraBot.Tools;
 using System;
 using System.Collections.Generic;
@@ -71,10 +72,11 @@ namespace SoraBot.Commands
             // 表示图片从磁盘读取还是从网络下载
             var sourceType = match[3];
 
+            var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
+            var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
             if (sourceType == "涩")
             {
-                var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
-                var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
+                
 
                 var images = SeTuBll.GetRandomImageFromDatabase(num, false, tag1, tag2);
 
@@ -106,8 +108,8 @@ namespace SoraBot.Commands
             {
                 // 拼接URL
                 var urlBuilder = new StringBuilder(80);
-                var urlBuilderCopy = urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
-
+                urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
+                string urlBuilderCopy = urlBuilder.ToString();
                 // 添加TAG
                 foreach (var tag in tags)
                 {
@@ -123,7 +125,7 @@ namespace SoraBot.Commands
                 }
                 else
                 {
-                    urlBuilderCopy.Append($"&keyword={tags[0]}&tag={tags[1]}");
+                    urlBuilderCopy = urlBuilderCopy + $"&keyword={tag1}&tag={tag2}";
 
                     imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilderCopy.ToString());
                     if (imageFetchResult?.Data?.Count > 0)
@@ -187,12 +189,11 @@ namespace SoraBot.Commands
             // 表示图片从磁盘读取还是从网络下载
             var sourceType = match[3];
 
+            var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
+            var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
             if (sourceType == "涩")
             {
                 var msgNodes = new List<CustomNode>();
-
-                var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
-                var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
 
                 var images = SeTuBll.GetRandomImageFromDatabase(num, false, tag1, tag2);
 
@@ -232,8 +233,8 @@ namespace SoraBot.Commands
             {
                 // 拼接URL
                 var urlBuilder = new StringBuilder(80);
-                var urlBuilderCopy = urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
-
+                urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
+                var urlBuilderCopy = urlBuilder.ToString();
                 // 添加TAG
                 foreach (var tag in tags)
                 {
@@ -249,7 +250,7 @@ namespace SoraBot.Commands
                 }
                 else
                 {
-                    urlBuilderCopy.Append($"&keyword={tags[0]}&tag={tags[1]}");
+                    urlBuilderCopy = urlBuilderCopy + $"&keyword={tag1}&tag={tag2}";
 
                     imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilderCopy.ToString());
                     if (imageFetchResult?.Data?.Count > 0)
