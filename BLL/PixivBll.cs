@@ -21,7 +21,7 @@ namespace SoraBot.BLL
             {
                 var pixiv = Ioc.Require<PixivClient>();
                 var api = $"illust/detail?illust_id={pid}";
-                var json = await pixiv.GetAsync(api);
+                var json = await pixiv.GetAsync(api, 3);
                 var obj = System.Text.Json.JsonSerializer.Deserialize<IllustDetailResult>(json);
                 return obj?.Illust;
             }
