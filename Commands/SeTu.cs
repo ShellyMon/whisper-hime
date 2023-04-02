@@ -197,7 +197,7 @@ namespace SoraBot.Commands
                 // 通过API检索
 
                 var sb = new StringBuilder(128);
-                sb.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
+                sb.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
 
                 foreach (var tag in tags)
                 {
