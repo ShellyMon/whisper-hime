@@ -7,6 +7,7 @@ using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
+using SoraBot.Dto.Lolicon;
 using SoraBot.Tools;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,7 @@ namespace SoraBot.Commands
             {
                 // 拼接URL
                 var urlBuilder = new StringBuilder(80);
-                urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
+                var urlBuilderCopy = urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
 
                 // 添加TAG
                 foreach (var tag in tags)
@@ -115,43 +116,28 @@ namespace SoraBot.Commands
 
                 var imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilder.ToString());
 
+                //当tags搜索图片失败时，切换到关键词搜索图片
                 if (imageFetchResult?.Data?.Count > 0)
                 {
-                    var downloadTasks = new List<Task<Tuple<string, string>>>();
-
-                    for (var i = 0; i < imageFetchResult.Data.Count; i++)
-                    {
-                        downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
-                    }
-
-                    Task.WaitAll(downloadTasks.ToArray());
-
-                    for (int i = 0; i < imageFetchResult.Data.Count; i++)
-                    {
-                        var image = imageFetchResult.Data[i];
-                        var path = downloadTasks[i].Result;
-
-                        if (string.IsNullOrEmpty(path.Item2))
-                            continue;
-                        if (!File.Exists(path.Item2))
-                            continue;
-                        if (Util.IsImageTooLarge(path.Item2))
-                            continue;
-
-                        var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2));
-
-                        if (status.RetCode != ApiStatusType.Ok)
-                        {
-                            await ev.Reply("消息发送失败");
-                        }
-                    }
+                    await imageDownReply(ev, imageFetchResult);
                 }
                 else
                 {
-                    await ev.Reply("淦，老兄，你的XP好怪哦，没有找到这种图片");
-                }
+                    urlBuilderCopy.Append($"&keyword={tags[0]}&tag={tags[1]}");
+
+                    imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilderCopy.ToString());
+                    if (imageFetchResult?.Data?.Count > 0)
+                    {
+                        await imageDownReply(ev, imageFetchResult);
+                    }
+                    else
+                    {
+                        await ev.Reply("淦，老兄，你的XP好怪哦，没有找到这种图片");
+                    }                }
             }
         }
+
+        
 
         [SoraCommand(CommandExpressions = new[] { "^来([\\d|一|二|两|俩|三|四|五|六|七|八|九|十|几]*)[点|张|份](.*?)([色|涩])图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
         public static async ValueTask GroupGetSeTu(GroupMessageEventArgs ev)
@@ -246,7 +232,7 @@ namespace SoraBot.Commands
             {
                 // 拼接URL
                 var urlBuilder = new StringBuilder(80);
-                urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
+                var urlBuilderCopy = urlBuilder.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
 
                 // 添加TAG
                 foreach (var tag in tags)
@@ -256,53 +242,29 @@ namespace SoraBot.Commands
 
                 var imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilder.ToString());
 
+                //当tags搜索图片失败时，切换到关键词搜索图片
                 if (imageFetchResult?.Data?.Count > 0)
                 {
-                    var downloadTasks = new List<Task<Tuple<string, string>>>();
-
-                    for (var i = 0; i < imageFetchResult.Data.Count; i++)
-                    {
-                        downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
-                    }
-
-                    Task.WaitAll(downloadTasks.ToArray());
-
-                    var msgNodes = new List<CustomNode>();
-
-                    for (int i = 0; i < imageFetchResult.Data.Count; i++)
-                    {
-                        var image = imageFetchResult.Data[i];
-                        var path = downloadTasks[i].Result;
-
-                        if (string.IsNullOrEmpty(path.Item2))
-                            continue;
-                        if (!File.Exists(path.Item2))
-                            continue;
-                        if (Util.IsImageTooLarge(path.Item2))
-                            continue;
-
-                        msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2)));
-                    }
-
-                    if (msgNodes.Count == 0)
-                    {
-                        await ev.SourceGroup.SendGroupMessage("没有找到图片");
-                        return;
-                    }
-
-                    var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(msgNodes);
-
-                    if (status.RetCode != ApiStatusType.Ok)
-                    {
-                        await ev.SourceGroup.SendGroupMessage("消息发送失败");
-                    }
+                    await imageDownSendGroup(ev, imageFetchResult);
                 }
                 else
                 {
-                    await ev.SourceGroup.SendGroupMessage("淦，老兄，你的XP好怪哦，没有找到这种图片");
+                    urlBuilderCopy.Append($"&keyword={tags[0]}&tag={tags[1]}");
+
+                    imageFetchResult = await ImageDownloadService.GetLoliconImage(urlBuilderCopy.ToString());
+                    if (imageFetchResult?.Data?.Count > 0)
+                    {
+                        await imageDownSendGroup(ev, imageFetchResult);
+                    }
+                    else
+                    {
+                        await ev.SourceGroup.SendGroupMessage("淦，老兄，你的XP好怪哦，没有找到这种图片");
+                    }
                 }
             }
         }
+
+
 
         [SoraCommand(CommandExpressions = new[] { "^随机[色|涩]图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
         public static async ValueTask GroupGetRandomSeTu(GroupMessageEventArgs ev)
@@ -347,5 +309,82 @@ namespace SoraBot.Commands
 
             await ev.Reply(msg);
         }
+
+
+        private static async Task imageDownSendGroup(GroupMessageEventArgs ev, LoliconApiResult<List<LoliconImage>> imageFetchResult)
+        {
+
+            var downloadTasks = new List<Task<Tuple<string, string>>>();
+
+            for (var i = 0; i < imageFetchResult.Data.Count; i++)
+            {
+                downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
+            }
+
+            Task.WaitAll(downloadTasks.ToArray());
+
+            var msgNodes = new List<CustomNode>();
+
+            for (int i = 0; i < imageFetchResult.Data.Count; i++)
+            {
+                var image = imageFetchResult.Data[i];
+                var path = downloadTasks[i].Result;
+
+                if (string.IsNullOrEmpty(path.Item2))
+                    continue;
+                if (!File.Exists(path.Item2))
+                    continue;
+                if (Util.IsImageTooLarge(path.Item2))
+                    continue;
+
+                msgNodes.Add(new CustomNode("涩图人", ev.LoginUid, $"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2)));
+            }
+
+            if (msgNodes.Count == 0)
+            {
+                await ev.SourceGroup.SendGroupMessage("没有找到图片");
+                return;
+            }
+
+            var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(msgNodes);
+
+            if (status.RetCode != ApiStatusType.Ok)
+            {
+                await ev.SourceGroup.SendGroupMessage("消息发送失败");
+            }
+        }
+
+        private static async Task imageDownReply(PrivateMessageEventArgs ev, LoliconApiResult<List<LoliconImage>> imageFetchResult)
+        {
+            var downloadTasks = new List<Task<Tuple<string, string>>>();
+
+            for (var i = 0; i < imageFetchResult.Data.Count; i++)
+            {
+                downloadTasks.Add(SeTuBll.DownloadPixivImageAsync(imageFetchResult.Data[i].Urls.Original));
+            }
+
+            Task.WaitAll(downloadTasks.ToArray());
+
+            for (int i = 0; i < imageFetchResult.Data.Count; i++)
+            {
+                var image = imageFetchResult.Data[i];
+                var path = downloadTasks[i].Result;
+
+                if (string.IsNullOrEmpty(path.Item2))
+                    continue;
+                if (!File.Exists(path.Item2))
+                    continue;
+                if (Util.IsImageTooLarge(path.Item2))
+                    continue;
+
+                var (status, _) = await ev.Reply($"https://www.pixiv.net/artworks/{image.PID}\r\n title : {image.Title}\r\n 作者 : {image.Author}\r\n" + SoraSegment.Image(path.Item2));
+
+                if (status.RetCode != ApiStatusType.Ok)
+                {
+                    await ev.Reply("消息发送失败");
+                }
+            }
+        }
+
     }
 }
