@@ -240,13 +240,20 @@ namespace SoraBot.Commands
                 }
             }
 
-            var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
-
-            var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
-
-            if (status.RetCode != ApiStatusType.Ok)
+            if (messages.Count > 0)
             {
-                await ev.Reply($"消息发送失败");
+                var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
+
+                var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
+
+                if (status.RetCode != ApiStatusType.Ok)
+                {
+                    await ev.Reply($"消息发送失败");
+                }
+            }
+            else
+            {
+                await ev.Reply($"图片全都失踪了");
             }
         }
     }
