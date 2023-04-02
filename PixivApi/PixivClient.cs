@@ -297,7 +297,8 @@ namespace SoraBot.PixivApi
         /// <returns></returns>
         public async Task<string> GetAsync(string api, int retry)
         {
-            int count = Math.Max(1, retry);
+            var count = Math.Max(1, retry);
+            var refreshToken = false;
 
             while (count > 0)
             {
@@ -306,6 +307,13 @@ namespace SoraBot.PixivApi
                 if (!string.IsNullOrEmpty(result))
                 {
                     return result;
+                }
+
+                if (!refreshToken)
+                {
+                    _logger.LogInformation("刷新 Pixiv token");
+                    await RefreshTokenAsync();
+                    refreshToken = true;
                 }
 
                 count--;
