@@ -286,6 +286,31 @@ namespace SoraBot.PixivApi
         }
 
         /// <summary>
+        /// 调用接口
+        /// </summary>
+        /// <param name="api">接口路径，不是全路径。</param>
+        /// <param name="retry">失败后重试次数</param>
+        /// <returns></returns>
+        public async Task<string> GetAsync(string api, int retry)
+        {
+            int count = Math.Max(1, retry);
+
+            while (count > 0)
+            {
+                var result = await GetAsync(api);
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    return result;
+                }
+
+                count--;
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
         /// 从服务器下载图片
         /// </summary>
         /// <param name="url">图片地址，只能从<c>i.pximg.net</c>下载。</param>
