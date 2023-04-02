@@ -269,6 +269,8 @@ namespace SoraBot.PixivApi
 
             var url = $"{API_URL}/{api}";
 
+            _logger.LogInformation("请求接口 {url}", url);
+
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             var timeHash = CreateClientTimeHash();
