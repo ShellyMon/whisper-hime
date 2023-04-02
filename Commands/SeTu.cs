@@ -75,7 +75,7 @@ namespace SoraBot.Commands
                 var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
                 var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
 
-                var images = SeTuBll.GetRandomImageFromDatabase(num, tag1, tag2);
+                var images = SeTuBll.GetRandomImageFromDatabase(num, false, tag1, tag2);
 
                 for (int i = 0; i < images.Count; i++)
                 {
@@ -208,7 +208,7 @@ namespace SoraBot.Commands
                 var tag1 = tags.Length > 0 ? tags[0] : string.Empty;
                 var tag2 = tags.Length > 1 ? tags[1] : string.Empty;
 
-                var images = SeTuBll.GetRandomImageFromDatabase(num, tag1, tag2);
+                var images = SeTuBll.GetRandomImageFromDatabase(num, false, tag1, tag2);
 
                 for (int i = 0; i < images.Count; i++)
                 {
@@ -307,7 +307,7 @@ namespace SoraBot.Commands
         [SoraCommand(CommandExpressions = new[] { "^随机[色|涩]图$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
         public static async ValueTask GroupGetRandomSeTu(GroupMessageEventArgs ev)
         {
-            var images = SeTuBll.GetRandomImageFromDatabase(1, string.Empty, string.Empty);
+            var images = SeTuBll.GetRandomImageFromDatabase(1, false, string.Empty, string.Empty);
 
             if (images.Count == 0)
             {

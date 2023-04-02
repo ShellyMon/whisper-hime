@@ -16,7 +16,7 @@ namespace SoraBot.BLL
     /// </summary>
     internal class SeTuBll
     {
-        internal static List<Illustration> GetRandomImageFromDatabase(int num, string tag1, string tag2)
+        internal static List<Illustration> GetRandomImageFromDatabase(int num, bool adult, string tag1, string tag2)
         {
             var db = Ioc.Require<ILiteDatabase>();
             var query = db.GetCollection<Illustration>().Query();
@@ -28,6 +28,11 @@ namespace SoraBot.BLL
             if (!string.IsNullOrEmpty(tag2))
             {
                 query = query.Where(x => x.Tags.Contains(tag2));
+            }
+
+            if (!adult)
+            {
+                query = query.Where(x => !x.IsAdult);
             }
 
             var expr = BsonExpression.Create("RANDOM()");
