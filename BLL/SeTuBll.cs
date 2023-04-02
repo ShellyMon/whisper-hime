@@ -70,28 +70,31 @@ namespace SoraBot.BLL
                     logger.LogError("图片下载失败");
                     return (url, string.Empty, tag);
                 }
+
+                if (File.Exists(fullPath))
+                {
+                    try
+                    {
+                        logger.LogInformation("压缩图片 {}", fullPath);
+
+                        // 重新压缩图片，改变HASH
+                        using (var imgObj = await Image.LoadAsync(fullPath))
+                        {
+                            var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.BestSpeed };
+                            await imgObj.SaveAsync(fullPath, encoder);
+                        }
+
+                        logger.LogInformation("完成");
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError(e, "图片压缩失败");
+                    }
+                }
             }
 
             if (File.Exists(fullPath))
             {
-                try
-                {
-                    logger.LogInformation("压缩图片 {}", fullPath);
-
-                    // 重新压缩图片，改变HASH
-                    using (var imgObj = await Image.LoadAsync(fullPath))
-                    {
-                        var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.BestSpeed };
-                        await imgObj.SaveAsync(fullPath, encoder);
-                    }
-
-                    logger.LogInformation("完成");
-                }
-                catch (Exception e)
-                {
-                    logger.LogError(e, "图片压缩失败");
-                }
-
                 return (url, fullPath, tag);
             }
             else
