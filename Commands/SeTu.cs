@@ -267,7 +267,7 @@ namespace SoraBot.Commands
 
                 if (!File.Exists(filePath))
                 {
-                    filePath = (await SeTuBll.DownloadPixivImageAsync(img.Url)).Item2;
+                    (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(img.Url);
 
                     if (string.IsNullOrEmpty(filePath))
                     {

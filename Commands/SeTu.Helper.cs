@@ -54,7 +54,7 @@ namespace SoraBot.Commands
 
         private static async Task ReplySeTuPrivateAsync(PrivateMessageEventArgs ev, LoliconApiResult<List<LoliconImage>> images)
         {
-            var tasks = new LinkedList<Task<Tuple<string, string, object?>>>();
+            var tasks = new LinkedList<Task<(string, string, object?)>>();
             var failedTasks = new HashSet<LoliconImage>();
 
             // 开始下载所有图片
@@ -132,7 +132,7 @@ namespace SoraBot.Commands
 
         private static async Task ReplySeTuGroupAsync(GroupMessageEventArgs ev, LoliconApiResult<List<LoliconImage>> images)
         {
-            var tasks = new List<Task<Tuple<string, string, object?>>>(images.Data.Count);
+            var tasks = new List<Task<(string, string, object?)>>(images.Data.Count);
 
             // 开始下载所有图片
             foreach (var image in images.Data)
