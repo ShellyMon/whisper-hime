@@ -146,7 +146,7 @@ namespace SoraBot.Commands
             // 下载成功的图片
             var downloadedImages = new List<(object, string)>(images.Data.Count);
             // 图片信息下载列表
-            var detailTasks = new List<Task<Illust?>>(images.Data.Count);
+            var detailTasks = new List<(LoliconImage, Task<Illust?>)>(images.Data.Count);
 
             // 把所有下载成功的图片添加到完成列表，下载失败的尝试直接从Pixiv获取信息
             foreach (var task in tasks)
@@ -157,7 +157,7 @@ namespace SoraBot.Commands
                 if (string.IsNullOrEmpty(path))
                 {
                     // 添加到详情下载列表
-                    detailTasks.Add(PixivBll.GetImageByPidAsync(image.PID));
+                    detailTasks.Add((image, PixivBll.GetImageByPidAsync(image.PID)));
                 }
                 else
                 {
@@ -170,7 +170,7 @@ namespace SoraBot.Commands
             }
 
             // 等待图片信息下载完成
-            await Task.WhenAll(detailTasks);
+            await Task.WhenAll(detailTasks.Select(x => x.Item2));
 
             // 这里就直接复用上面的变量了
             tasks.Clear();
@@ -178,16 +178,27 @@ namespace SoraBot.Commands
             // 从Pixiv获取信息后，再次尝试下载这些图片
             foreach (var task in detailTasks)
             {
-                var detail = task.Result;
+                var detail = task.Item2.Result;
+                var page = task.Item1.p;
 
                 if (detail == null)
                     continue;
 
-                // 暂不支持多图作品
-                if (detail.MetaPages.Length > 1)
-                    continue;
+                var url = string.Empty;
 
-                var url = detail?.MetaSinglePage?.OriginalImageUrl;
+                if (detail.MetaPages.Length > 1)
+                {
+                    if (page < 0 || page >= detail.MetaPages.Length)
+                    {
+                        page = 0;
+                    }
+
+                    url = Util.ChoiceGoodQualityImageUrl(detail.MetaPages[page].ImageUrls);
+                }
+                else
+                {
+                    url = detail?.MetaSinglePage?.OriginalImageUrl;
+                }
 
                 if (string.IsNullOrEmpty(url))
                     continue;
