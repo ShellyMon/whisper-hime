@@ -62,14 +62,14 @@ namespace SoraBot.BLL
 
                 if (status != "complete")
                 {
-                    logger.LogError("Failed to download image.");
+                    logger.LogError("图片下载失败");
                     return string.Empty;
                 }
             }
 
             if (File.Exists(fullPath))
             {
-                logger.LogInformation("Recompress image: {fullPath}", fullPath);
+                logger.LogInformation("压缩图片 {}", fullPath);
 
                 // 重新压缩图片，改变HASH
                 using (var imgObj = await Image.LoadAsync(fullPath))
@@ -78,13 +78,13 @@ namespace SoraBot.BLL
                     await imgObj.SaveAsync(fullPath, encoder);
                 }
 
-                logger.LogInformation("Finished");
+                logger.LogInformation("完成");
 
                 return fullPath;
             }
             else
             {
-                logger.LogError("Missing image file.");
+                logger.LogError("文件不存在");
                 return string.Empty;
             }
         }

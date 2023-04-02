@@ -35,7 +35,7 @@ namespace SoraBot.Basics
         {
             var logger = Ioc.Require<ILogger<ImageDownloadService>>();
 
-            logger.LogInformation("Starting download file: {}", url);
+            logger.LogInformation("文件 {} 开始下载", url);
 
             var gid = await _ariaClient.AddUriAsync(new List<string> { url }, options);
 
@@ -48,7 +48,7 @@ namespace SoraBot.Basics
 
                 if (status == "complete")
                 {
-                    logger.LogInformation("Status: {}", status);
+                    logger.LogInformation("文件 {} 下载成功", url);
                     break;
                 }
                 else if (status == "error")
@@ -56,7 +56,7 @@ namespace SoraBot.Basics
                     // 删除失败记录
                     await _ariaClient.RemoveDownloadResultAsync(gid);
 
-                    logger.LogError("Status: {}", status);
+                    logger.LogError("文件 {} 下载失败", url);
                     break;
                 }
 
