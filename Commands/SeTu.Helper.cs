@@ -242,7 +242,7 @@ namespace SoraBot.Commands
 
             var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
 
-            var (status, _, _) = await ev.SoraApi.SendGroupForwardMsg(ev.SourceGroup.Id, forwardMsg);
+            var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
 
             if (status.RetCode != ApiStatusType.Ok)
             {
