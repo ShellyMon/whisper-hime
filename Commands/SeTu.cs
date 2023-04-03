@@ -57,17 +57,37 @@ namespace SoraBot.Commands
                     if (string.IsNullOrEmpty(name))
                         continue;
 
-                    var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", name);
+                    var img = images[0];
 
-                    if (!File.Exists(path))
+                    var fileName = Path.GetFileName(img.Url);
+
+                    var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", fileName);
+
+                    if (!File.Exists(filePath))
+                    {
+                        filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-cache", fileName);
+
+                        if (!File.Exists(filePath))
+                        {
+                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(img.Url);
+
+                            if (string.IsNullOrEmpty(filePath))
+                            {
+                                await ev.Reply("你要找的图片失踪了");
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!File.Exists(filePath))
                         continue;
-                    if (Util.IsImageTooLarge(path))
+                    if (Util.IsImageTooLarge(filePath))
                         continue;
 
                     var msg = SoraSegment.Text($"来源：https://www.pixiv.net/artworks/{item.Pid}\n")
                             + SoraSegment.Text($"标题：{item.Title}\n")
                             + SoraSegment.Text($"作者：{item.Artist}\n")
-                            + SoraSegment.Image(path);
+                            + SoraSegment.Image(filePath);
 
                     var (status, _) = await ev.Reply(msg);
 
@@ -162,17 +182,37 @@ namespace SoraBot.Commands
                     if (string.IsNullOrEmpty(name))
                         continue;
 
-                    var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", name);
+                    var img = images[0];
 
-                    if (!File.Exists(path))
+                    var fileName = Path.GetFileName(img.Url);
+
+                    var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", fileName);
+
+                    if (!File.Exists(filePath))
+                    {
+                        filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-cache", fileName);
+
+                        if (!File.Exists(filePath))
+                        {
+                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(img.Url);
+
+                            if (string.IsNullOrEmpty(filePath))
+                            {
+                                await ev.Reply("你要找的图片失踪了");
+                                return;
+                            }
+                        }
+                    }
+
+                    if (!File.Exists(filePath))
                         continue;
-                    if (Util.IsImageTooLarge(path))
+                    if (Util.IsImageTooLarge(filePath))
                         continue;
 
                     var msg = SoraSegment.Text($"来源：https://www.pixiv.net/artworks/{item.Pid}\n")
                             + SoraSegment.Text($"标题：{item.Title}\n")
                             + SoraSegment.Text($"作者：{item.Artist}\n")
-                            + SoraSegment.Image(path);
+                            + SoraSegment.Image(filePath);
 
                     messages.Add(msg);
                 }

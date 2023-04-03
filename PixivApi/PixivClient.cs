@@ -32,7 +32,7 @@ namespace SoraBot.PixivApi
         {
             _logger = logger;
 
-            var proxy = new WebProxy("socks5://127.0.0.1:50000");
+            var proxy = new WebProxy("socks5://127.0.0.1:10808");
             var clientHandler = new HttpClientHandler { Proxy = proxy };
             _httpClient = new HttpClient(clientHandler);
 
