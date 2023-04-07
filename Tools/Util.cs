@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -66,6 +67,26 @@ namespace SoraBot.Tools
                 return urls.SquareMedium;
 
             return string.Empty;
+        }
+
+        public static List<string> GetFileName(string path)
+        {
+            try
+            {
+                DirectoryInfo dir = new DirectoryInfo(path);
+                FileInfo[] finfo = dir.GetFiles();
+                List<string> fnames = new List<string>();
+                for (int i = 0; i < finfo.Length; i++)
+                {
+                    fnames.Add(finfo[i].Name);
+                }
+                return fnames;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

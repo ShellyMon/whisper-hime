@@ -4,12 +4,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MonkeyCache;
 using MonkeyCache.LiteDB;
+using ProtoBuf.Meta;
 using Sora.EventArgs.SoraEvent;
 using Sora.Net.Config;
 using SoraBot.Basics;
+using SoraBot.Dto.Pixiv;
+using SoraBot.Entity;
 using SoraBot.PixivApi;
 using System;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using YukariToolBox.LightLog;
 
 namespace Sora
@@ -89,6 +94,33 @@ namespace Sora
                 SendCommandErrMsg = false,
                 ApiTimeOut = TimeSpan.FromSeconds(30),
             });
+
+            //bot.Event.CommandManager.RegisterPrivateDynamicCommand(
+            //    new[] { "插入" },
+            //async eventArgs =>
+            //{
+            //    var a =  SoraBot.Tools.Util.GetFileName(@"clp\img");
+            //    string path = @"clp\img\";
+            //    var db = Ioc.Require<ILiteDatabase>();
+            //    var col = db.GetCollection<Wife>();
+            //    foreach (var item in a)
+            //    {
+            //        string[] b = item.Split(new char[] { '-', '.' });
+            //        Wife wife = new Wife()
+            //        {
+            //            Name = b[0],
+            //            Sentence = b[1],
+            //            ImageUrl = path+item
+            //        };
+            //        if (!col.Exists(x => x.Name.Contains(wife.Name)))
+            //        {
+            //            col.Insert(wife);
+            //        }
+
+            //    }
+            //    eventArgs.IsContinueEventChain = false;
+            //    await eventArgs.Reply("坏耶");
+            //});
 
             // 启动Bot
             logger.LogInformation("Startup");

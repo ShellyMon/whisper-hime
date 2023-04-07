@@ -43,7 +43,8 @@ namespace SoraBot.Commands
 
             if (!string.IsNullOrEmpty(strTags))
             {
-                tags = SegmenterService.Analyze(strTags);
+                //tags = SegmenterService.Analyze(strTags);
+                tags = strTags.Split(separator: new char[]{ ',', '，', '。', '.',' '});
             }
 
             // 来源
@@ -255,7 +256,7 @@ namespace SoraBot.Commands
             {
                 var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
 
-                var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
+                var (status, d, c) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
 
                 if (status.RetCode != ApiStatusType.Ok)
                 {
