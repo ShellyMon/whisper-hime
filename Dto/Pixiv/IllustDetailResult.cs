@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SoraBot.Dto.Pixiv
 {
@@ -6,5 +7,7 @@ namespace SoraBot.Dto.Pixiv
     {
         [JsonPropertyName("illust")]
         public Illust? Illust { get; set; }
+
+
     }
 }

@@ -1,10 +1,14 @@
 ﻿using LiteDB;
 using Sora.Attributes.Command;
+using Sora.Entities;
 using Sora.Entities.Segment;
+using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration;
+using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
 using SoraBot.BLL;
+using SoraBot.Dto.Pixiv;
 using SoraBot.Entity;
 using SoraBot.Tools;
 using System;
@@ -19,7 +23,7 @@ namespace SoraBot.Commands
     /// Pixiv图片命令
     /// </summary>
     [CommandSeries]
-    public class Pixiv
+    public partial class Pixiv
     {
         [SoraCommand(CommandExpressions = new[] { "^\\.pid (\\d+?)$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private, SuperUserCommand = false)]
         public static async ValueTask GetImageByPid(PrivateMessageEventArgs ev)
@@ -220,5 +224,50 @@ namespace SoraBot.Commands
                 await ev.Reply("没有图片被添加到数据库");
             }
         }
+
+        [SoraCommand(CommandExpressions = new[] { ".排行榜" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group, SuperUserCommand = false)]
+        public static async ValueTask AddImageByRanking(GroupMessageEventArgs ev)
+        {
+            // 获取图片详情
+            var image = await PixivBll.GetImageByRankingAsync("week");
+
+            if (image == null)
+            {
+                await ev.Reply("找不到图片");
+                return;
+            }
+
+            var messages = new List<MessageBody>(image.Count);
+
+            var taskImagePage = new List<Task<MessageBody>>();
+            foreach (var imagePage in image)
+            {
+                taskImagePage.Add(DownPixivRank(imagePage,ev));
+            }
+            var paths = await Task.WhenAll(taskImagePage);
+
+            foreach (var msg in taskImagePage)
+            {
+                messages.Add(msg.Result);
+            }
+
+            if (messages.Count == 0)
+            {
+                await ev.SourceGroup.SendGroupMessage("没有找到图片");
+                return;
+            }
+
+            var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
+
+            var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
+
+            if (status.RetCode != ApiStatusType.Ok)
+            {
+                await ev.SourceGroup.SendGroupMessage("消息发送失败");
+            }
+
+        }
+
+        
     }
 }
