@@ -226,7 +226,7 @@ namespace SoraBot.Commands
         }
 
         [SoraCommand(CommandExpressions = new[] { ".排行榜" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group, SuperUserCommand = false)]
-        public static async ValueTask AddImageByRanking(GroupMessageEventArgs ev)
+        public static async ValueTask GetImageByRanking(GroupMessageEventArgs ev)
         {
             // 获取图片详情
             var image = await PixivBll.GetImageByRankingAsync("week");
@@ -237,18 +237,20 @@ namespace SoraBot.Commands
                 return;
             }
 
-            var messages = new List<MessageBody>(image.Count);
+            var messages = new List<MessageBody>();
 
             var taskImagePage = new List<Task<MessageBody>>();
             foreach (var imagePage in image)
             {
-                taskImagePage.Add(DownPixivRank(imagePage,ev));
+                taskImagePage.Add(DownPixivRank(imagePage, ev));
             }
+
             var paths = await Task.WhenAll(taskImagePage);
 
             foreach (var msg in taskImagePage)
             {
-                messages.Add(msg.Result);
+                if (msg.Result != null)
+                    messages.Add(msg.Result);
             }
 
             if (messages.Count == 0)

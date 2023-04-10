@@ -41,6 +41,9 @@ namespace SoraBot.Commands
                     {
                         if (string.IsNullOrEmpty(path.Item2))
                             continue;
+                        if (Util.IsImageTooLarge(path.Item2))
+                            continue;
+
                         msg += SoraSegment.Image(path.Item2);
                     }
                 }
@@ -64,6 +67,11 @@ namespace SoraBot.Commands
                     await ev.Reply("图片文件失踪了");
                     return null;
                 }
+
+                if (Util.IsImageTooLarge(path.Item2)) {
+                    return null;
+                }
+
 
                 var msg = SoraSegment.Text($"来源：https://www.pixiv.net/artworks/{imagePage.Id}\n")
                         + SoraSegment.Text($"标题：{imagePage.Title}\n")
