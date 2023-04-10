@@ -13,7 +13,7 @@ namespace SoraBot.Commands
 {
     public partial class Pixiv
     {
-        private static async Task<MessageBody> DownPixivRank(Illusts imagePage, Sora.EventArgs.SoraEvent.GroupMessageEventArgs ev)
+        private static async Task<MessageBody> DownPixivRank(Illust imagePage, Sora.EventArgs.SoraEvent.GroupMessageEventArgs ev)
         {
             if (imagePage.MetaPages.Length > 0)
             {

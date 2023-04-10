@@ -41,7 +41,7 @@ namespace SoraBot.BLL
         /// </summary>
         /// <param name="RankType"></param>
         /// <returns></returns>
-        internal static async Task<List<Illusts>?> GetImageByRankingAsync(string RankType)
+        internal static async Task<List<Illust>?> GetImageByRankingAsync(string RankType)
         {
             var logger = Ioc.Require<ILogger<Pixiv>>();
             try

@@ -10,6 +10,6 @@ namespace SoraBot.Dto.Pixiv
     public class IllustsDetailResult
     {
         [JsonPropertyName("illusts")]
-        public List<Illusts>? Illusts { get; set; }
+        public List<Illust>? Illusts { get; set; }
     }
 }
