@@ -58,8 +58,8 @@ namespace SoraBot.Commands
             Barrel.Current.Add($"User.WifeGachaDate.{ev.Sender.Id}", DateTime.Now.Date, TimeSpan.FromDays(1));
 
             var msg = SoraSegment.At(ev.Sender)
-                    + wife.Sentence
-                    + SoraSegment.Image(imagePath);
+                    + SoraSegment.Image(imagePath)
+                    + wife.Sentence;
 
             await ev.Reply(msg);
         }
