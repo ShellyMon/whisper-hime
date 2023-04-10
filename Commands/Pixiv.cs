@@ -225,11 +225,16 @@ namespace SoraBot.Commands
             }
         }
 
-        [SoraCommand(CommandExpressions = new[] { ".排行榜" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group, SuperUserCommand = false)]
+        [SoraCommand(CommandExpressions = new[] { ".排行榜" }, MatchType = Sora.Enumeration.MatchType.KeyWord, SourceType = SourceFlag.Group, SuperUserCommand = false)]
         public static async ValueTask GetImageByRanking(GroupMessageEventArgs ev)
         {
+            string RankMoth = ev.Message.RawText.Split('.')[0];
+            if (string.IsNullOrEmpty(RankMoth))
+                RankMoth = "month";
+            else
+                RankMoth = Util.ParseChineseRanking(RankMoth);
             // 获取图片详情
-            var image = await PixivBll.GetImageByRankingAsync("week");
+            var image = await PixivBll.GetImageByRankingAsync(RankMoth);
 
             if (image == null)
             {

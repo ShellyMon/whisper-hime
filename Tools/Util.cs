@@ -30,6 +30,25 @@ namespace SoraBot.Tools
         }
 
         /// <summary>
+        /// 解析排行榜配置
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        internal static string ParseChineseRanking(string text)
+        {
+            return text switch
+            {
+                "月" or "m" or "M" => "month",
+                "周" or "w" or "W"=> "week",
+                "日" or "d" or "D" => "day",
+                "原创" or "wo" or "WO" => "week_original",
+                "新人" or "wr" or "WR" => "week_rookie",
+                // 其它情況返回零不作处理
+                _ => text
+            };
+        }
+
+        /// <summary>
         /// 判断图片大小是否超出可发送的限制
         /// </summary>
         /// <param name="path"></param>
