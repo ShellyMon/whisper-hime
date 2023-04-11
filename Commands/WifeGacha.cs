@@ -59,6 +59,7 @@ namespace SoraBot.Commands
 
             var msg = SoraSegment.At(ev.Sender)
                     + SoraSegment.Image(imagePath)
+                    + $"【{wife.Name}】"
                     + wife.Sentence;
 
             await ev.Reply(msg);
