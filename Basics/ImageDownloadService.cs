@@ -31,6 +31,14 @@ namespace SoraBot.Basics
             return obj ?? new();
         }
 
+        internal static async Task<List<SoraBot.Dto.BGM.CalendarItem>> GetBgmAnimeCalendar()
+        {
+            var json = await HttpGetAsync("https://api.bgm.tv/calendar");
+            var obj = JsonConvert.DeserializeObject<List<SoraBot.Dto.BGM.CalendarItem>>(json);
+            return obj ?? new();
+        }
+
+
         internal static async Task<string> DownloadFileByAriaAsync(string url, IDictionary<string, object> options)
         {
             var logger = Ioc.Require<ILogger<ImageDownloadService>>();

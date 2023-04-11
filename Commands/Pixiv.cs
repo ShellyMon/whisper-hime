@@ -229,10 +229,12 @@ namespace SoraBot.Commands
         public static async ValueTask GetImageByRanking(GroupMessageEventArgs ev)
         {
             string RankMoth = ev.Message.RawText.Split('.')[0];
+
             if (string.IsNullOrEmpty(RankMoth))
                 RankMoth = "month";
             else
                 RankMoth = Util.ParseChineseRanking(RankMoth);
+
             // 获取图片详情
             var image = await PixivBll.GetImageByRankingAsync(RankMoth);
 
