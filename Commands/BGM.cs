@@ -6,8 +6,10 @@ using Sora.Enumeration;
 using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
 using SoraBot.Basics;
+using SoraBot.BLL;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 namespace SoraBot.Commands
@@ -22,11 +24,19 @@ namespace SoraBot.Commands
 
             var messages = new List<MessageBody>();
 
+            var DayOfWeek = (long)DateTime.Now.DayOfWeek;
+
+            var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BGM", $"bgmlist{DayOfWeek}.png");
+            // 检查缓存
+            if (!File.Exists(fullPath))
+            {
+                BGMBll.PageScreenshot("https://bgmlist.com/", fullPath);
+            }
+
             foreach (var weekMsg in result) {
 
                 var weekDayCn = weekMsg.Weekday.Cn;
 
-                
                 if (weekMsg.Weekday.Id == (long)DateTime.Now.DayOfWeek)
                 {
                     messages.Add(weekDayCn);
@@ -46,8 +56,12 @@ namespace SoraBot.Commands
                     }
                 }
             }
-
             var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
+
+            var mgs = SoraSegment.At(ev.Sender)
+                     +SoraSegment.Image(fullPath);
+
+            await ev.Reply(mgs);
 
             var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
 
@@ -55,6 +69,7 @@ namespace SoraBot.Commands
             {
                 await ev.SourceGroup.SendGroupMessage("消息发送失败");
             }
+            
 
         }
     }
