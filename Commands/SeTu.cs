@@ -182,9 +182,9 @@ namespace SoraBot.Commands
                     if (string.IsNullOrEmpty(name))
                         continue;
 
-                    var img = images[0];
+                    //var img = images[0];
 
-                    var fileName = Path.GetFileName(img.Url);
+                    var fileName = Path.GetFileName(item.Url);
 
                     var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", fileName);
 
@@ -194,7 +194,7 @@ namespace SoraBot.Commands
 
                         if (!File.Exists(filePath))
                         {
-                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(img.Url);
+                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(item.Url);
 
                             if (string.IsNullOrEmpty(filePath))
                             {
