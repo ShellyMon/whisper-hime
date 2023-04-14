@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SoraBot.Dto.BGM
+namespace WhisperHime.Dto.BGM
 {
     public class Images
     {

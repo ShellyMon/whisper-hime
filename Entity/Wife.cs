@@ -1,6 +1,6 @@
 ﻿using LiteDB;
 
-namespace SoraBot.Entity
+namespace WhisperHime.Entity
 {
     /// <summary>
     /// 老婆实体

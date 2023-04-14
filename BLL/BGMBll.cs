@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace SoraBot.BLL
+namespace WhisperHime.BLL
 {
     public class BGMBll
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace SoraBot.Dto.BGM
+namespace WhisperHime.Dto.BGM
 {
     public class Rating
     {

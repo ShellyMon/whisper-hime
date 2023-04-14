@@ -3,18 +3,18 @@ using Sora.Entities.Segment;
 using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
-using SoraBot.Basics;
-using SoraBot.BLL;
-using SoraBot.Dto.Lolicon;
-using SoraBot.Dto.Pixiv;
-using SoraBot.Tools;
+using WhisperHime.Basics;
+using WhisperHime.BLL;
+using WhisperHime.Dto.Lolicon;
+using WhisperHime.Dto.Pixiv;
+using WhisperHime.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SoraBot.Commands
+namespace WhisperHime.Commands
 {
     public partial class SeTu
     {

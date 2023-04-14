@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace SoraBot.Tools
+namespace WhisperHime.Tools
 {
     internal static class Extensions
     {

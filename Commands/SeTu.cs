@@ -6,9 +6,9 @@ using Sora.Entities.Segment.DataModel;
 using Sora.Enumeration;
 using Sora.Enumeration.ApiType;
 using Sora.EventArgs.SoraEvent;
-using SoraBot.Basics;
-using SoraBot.BLL;
-using SoraBot.Tools;
+using WhisperHime.Basics;
+using WhisperHime.BLL;
+using WhisperHime.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoraBot.Commands
+namespace WhisperHime.Commands
 {
     /// <summary>
     /// 色图

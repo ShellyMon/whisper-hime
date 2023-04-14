@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using SoraBot.Basics;
-using SoraBot.Commands;
-using SoraBot.Dto.Pixiv;
-using SoraBot.PixivApi;
+using WhisperHime.Basics;
+using WhisperHime.Commands;
+using WhisperHime.Dto.Pixiv;
+using WhisperHime.PixivApi;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace SoraBot.BLL
+namespace WhisperHime.BLL
 {
     /// <summary>
     /// Pixiv

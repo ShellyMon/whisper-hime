@@ -1,12 +1,12 @@
 ﻿using Aria2NET;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SoraBot.Dto.Lolicon;
+using WhisperHime.Dto.Lolicon;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SoraBot.Basics
+namespace WhisperHime.Basics
 {
     internal class ImageDownloadService
     {
@@ -31,10 +31,10 @@ namespace SoraBot.Basics
             return obj ?? new();
         }
 
-        internal static async Task<List<SoraBot.Dto.BGM.CalendarItem>> GetBgmAnimeCalendar()
+        internal static async Task<List<WhisperHime.Dto.BGM.CalendarItem>> GetBgmAnimeCalendar()
         {
             var json = await HttpGetAsync("https://api.bgm.tv/calendar");
-            var obj = JsonConvert.DeserializeObject<List<SoraBot.Dto.BGM.CalendarItem>>(json);
+            var obj = JsonConvert.DeserializeObject<List<WhisperHime.Dto.BGM.CalendarItem>>(json);
             return obj ?? new();
         }
 

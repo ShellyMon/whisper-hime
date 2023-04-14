@@ -1,4 +1,4 @@
-﻿namespace SoraBot.Dto.Lolicon
+﻿namespace WhisperHime.Dto.Lolicon
 {
     internal class LoliconImageUrls
     {

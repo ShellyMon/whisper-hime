@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace SoraBot.Basics
+namespace WhisperHime.Basics
 {
     internal class Ioc
     {

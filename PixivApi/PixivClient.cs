@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SoraBot.Dto.Pixiv;
+using WhisperHime.Dto.Pixiv;
 using System;
 using System.IO;
 using System.Net;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SoraBot.PixivApi
+namespace WhisperHime.PixivApi
 {
     public class PixivClient
     {

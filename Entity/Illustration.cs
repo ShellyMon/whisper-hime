@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SoraBot.Entity
+namespace WhisperHime.Entity
 {
     /// <summary>
     /// 插画实体

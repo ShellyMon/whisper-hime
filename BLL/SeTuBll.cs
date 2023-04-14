@@ -2,14 +2,14 @@
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using SoraBot.Basics;
-using SoraBot.Entity;
+using WhisperHime.Basics;
+using WhisperHime.Entity;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SoraBot.BLL
+namespace WhisperHime.BLL
 {
     /// <summary>
     /// 色图

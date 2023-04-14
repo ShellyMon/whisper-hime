@@ -3,7 +3,7 @@ using Sora.EventArgs.SoraEvent;
 using System;
 using System.Threading.Tasks;
 
-namespace SoraBot.Tools
+namespace WhisperHime.Tools
 {
     internal static class BotExtensions
     {

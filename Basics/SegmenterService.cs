@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace SoraBot.Basics
+namespace WhisperHime.Basics
 {
     internal class SegmenterService
     {

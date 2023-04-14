@@ -1,15 +1,15 @@
 ﻿using Sora.Entities;
 using Sora.Entities.Segment;
-using SoraBot.BLL;
-using SoraBot.Dto.Pixiv;
-using SoraBot.Tools;
+using WhisperHime.BLL;
+using WhisperHime.Dto.Pixiv;
+using WhisperHime.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoraBot.Commands
+namespace WhisperHime.Commands
 {
     public partial class Pixiv
     {

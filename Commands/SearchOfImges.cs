@@ -1,14 +1,14 @@
 ﻿using Sora.Attributes.Command;
 using Sora.Enumeration;
 using Sora.EventArgs.SoraEvent;
-using SoraBot.Basics;
+using WhisperHime.Basics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoraBot.Commands
+namespace WhisperHime.Commands
 {
     [CommandSeries]
     public class SearchOfImges

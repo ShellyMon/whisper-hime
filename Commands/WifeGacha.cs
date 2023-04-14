@@ -3,13 +3,13 @@ using Sora.Attributes.Command;
 using Sora.Entities.Segment;
 using Sora.Enumeration;
 using Sora.EventArgs.SoraEvent;
-using SoraBot.BLL;
-using SoraBot.Tools;
+using WhisperHime.BLL;
+using WhisperHime.Tools;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace SoraBot.Commands
+namespace WhisperHime.Commands
 {
     /// <summary>
     /// 抽老婆

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace SoraBot.Dto.Pixiv
+namespace WhisperHime.Dto.Pixiv
 {
     public class IllustDetailResult
     {

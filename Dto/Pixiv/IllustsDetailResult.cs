@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace SoraBot.Dto.Pixiv
+namespace WhisperHime.Dto.Pixiv
 {
     public class IllustsDetailResult
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SoraBot.Dto.Lolicon
+namespace WhisperHime.Dto.Lolicon
 {
     internal class LoliconImage
     {

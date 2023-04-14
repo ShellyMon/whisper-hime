@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using YukariToolBox.LightLog;
 
-namespace SoraBot.Basics
+namespace WhisperHime.Basics
 {
     internal class LogService : ILogService
     {

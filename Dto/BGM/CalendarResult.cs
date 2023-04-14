@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoraBot.Dto.BGM
+namespace WhisperHime.Dto.BGM
 {
     internal class CalendarResult
     {

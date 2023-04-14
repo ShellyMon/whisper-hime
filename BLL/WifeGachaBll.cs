@@ -1,8 +1,8 @@
 ﻿using LiteDB;
-using SoraBot.Basics;
-using SoraBot.Entity;
+using WhisperHime.Basics;
+using WhisperHime.Entity;
 
-namespace SoraBot.BLL
+namespace WhisperHime.BLL
 {
     /// <summary>
     /// 抽老婆
