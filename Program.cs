@@ -4,18 +4,26 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MonkeyCache;
 using MonkeyCache.LiteDB;
-using ProtoBuf.Meta;
 using Sora.EventArgs.SoraEvent;
 using Sora.Net.Config;
 using WhisperHime.Basics;
-using WhisperHime.Dto.Pixiv;
-using WhisperHime.Entity;
 using WhisperHime.PixivApi;
 using System;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using YukariToolBox.LightLog;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
+using System.Net.Http;
+using System.IO;
+using SixLabors.ImageSharp.PixelFormats;
+using System.Net.Http.Headers;
+using System.Reflection.Metadata;
+using System.Security.Policy;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net;
+using System.Text;
+using System.Linq;
+using JiebaNet.Segmenter;
 
 namespace Sora
 {
@@ -121,6 +129,39 @@ namespace Sora
             //    eventArgs.IsContinueEventChain = false;
             //    await eventArgs.Reply("坏耶");
             //});
+
+            bot.Event.CommandManager.RegisterPrivateDynamicCommand(new[] { "测试" },
+                async eventArge =>
+                {
+                    var CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
+
+                    var Kind1970 =new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                    var datenow= DateTime.Now.ToUniversalTime().Subtract(Kind1970).Ticks/ 1000;
+
+                    var  api_key = Convert.ToBase64String(Encoding.UTF8.GetBytes((Math.Pow(datenow, 2) + Math.Pow(CHROME_UA.Length, 2)).ToString())).Trim().Replace("=", "");
+                    Console.Write(api_key);
+                    HttpClient client = new HttpClient();
+                    var filePath = @"D:\1122.jpg";
+
+                    var content = new MultipartFormDataContent();
+
+                    //content.Headers.Add("content-type", "multipart/form-data");
+                    content.Headers.Add("x-api-key",api_key);
+                    //content.Headers.Add("referer", "ttps://soutubot.moe/");
+                    content.Headers.Add("x-requested-with","XMLHttpRequest");
+
+                    content.Add(new StringContent("factor"), "1.2");
+                    content.Add(new ByteArrayContent(System.IO.File.ReadAllBytes(filePath)));
+
+                    var requestUri = "https://soutubot.moe/api/search";
+                    var result = client.PostAsync(requestUri, content).Result.Content.ReadAsStringAsync().Result;
+
+                    //Console.WriteLine(result);
+
+                    await eventArge.Reply("好耶");
+
+                });
 
             // 启动Bot
             logger.LogInformation("Startup");
