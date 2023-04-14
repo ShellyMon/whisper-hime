@@ -24,6 +24,8 @@ namespace SoraBot.Tools
                 "六" or "陸" => 6,
                 "七" or "柒" => 7,
                 "八" or "捌" => 8,
+                "九" or "玖" => 9,
+                "十" or "拾" => 10,
                 // 其它情況返回零不作处理
                 _ => 0
             };
@@ -44,7 +46,7 @@ namespace SoraBot.Tools
                 "原创" or "wo" or "WO" => "week_original",
                 "新人" or "wr" or "WR" => "week_rookie",
                 // 其它情況返回零不作处理
-                _ => text
+                _ => "month"
             };
         }
 
