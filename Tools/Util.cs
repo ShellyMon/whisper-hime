@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace WhisperHime.Tools
 {
@@ -60,6 +61,20 @@ namespace WhisperHime.Tools
             // 25 MB
             return new FileInfo(path).Length > 0x1900000;
         }
+
+        /// <summary>
+        ///计算soutubot的ApiKey
+        /// </summary>
+        /// <param name="key1">时间戳</param>
+        /// <param name="key2">UA长度</param>
+        /// <returns></returns>
+        internal static string ComputeApiKey(long key1, long key2)
+        {
+            var key = Convert.ToInt64(Math.Pow(key1, 2) + Math.Pow(key2, 2));
+            key -= key % 100;
+            return new string(Convert.ToBase64String(Encoding.ASCII.GetBytes(key.ToString())).TakeWhile(x => x != '=').Reverse().ToArray());
+        }
+
 
         /// <summary>
         /// 生成逗号分隔的标签字符串

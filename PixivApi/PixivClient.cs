@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using WhisperHime.Dto.Pixiv;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net;
@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WhisperHime.Dto.Pixiv;
 
 namespace WhisperHime.PixivApi
 {
@@ -24,15 +25,17 @@ namespace WhisperHime.PixivApi
         private static readonly string CLIENT_SECRET = "W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP";
         private static readonly string HASH_SECRET = "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c";
 
+        private readonly IConfiguration _configuration;
         private readonly ILogger<PixivClient> _logger;
         private readonly HttpClient _httpClient;
         private AuthToken? _token;
 
-        public PixivClient(ILogger<PixivClient> logger)
+        public PixivClient(IConfiguration configuration, ILogger<PixivClient> logger)
         {
+            _configuration = configuration;
             _logger = logger;
 
-            var proxy = new WebProxy("socks5://127.0.0.1:10808");
+            var proxy = new WebProxy(_configuration.GetValue<string>("Pixiv:Proxy"));
             var clientHandler = new HttpClientHandler { Proxy = proxy };
             _httpClient = new HttpClient(clientHandler);
 
