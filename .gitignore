@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Basics/SauceClientService.cs
+/Basics/SauceClientService.cs
+/Basics/SauceClientService.cs
+/Basics/SauceClientService.cs
+/Commands/SearchOfImges.cs

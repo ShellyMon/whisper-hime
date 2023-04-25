@@ -57,9 +57,7 @@ namespace WhisperHime.Commands
                     if (string.IsNullOrEmpty(name))
                         continue;
 
-                    var img = images[0];
-
-                    var fileName = Path.GetFileName(img.Url);
+                    var fileName = Path.GetFileName(item.Url);
 
                     var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-local", fileName);
 
@@ -69,7 +67,7 @@ namespace WhisperHime.Commands
 
                         if (!File.Exists(filePath))
                         {
-                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(img.Url);
+                            (_, filePath, _) = await SeTuBll.DownloadPixivImageAsync(item.Url);
 
                             if (string.IsNullOrEmpty(filePath))
                             {
@@ -83,6 +81,8 @@ namespace WhisperHime.Commands
                         continue;
                     if (Util.IsImageTooLarge(filePath))
                         continue;
+
+                    
 
                     var msg = SoraSegment.Text($"来源：https://www.pixiv.net/artworks/{item.Pid}\n")
                             + SoraSegment.Text($"标题：{item.Title}\n")
@@ -208,6 +208,8 @@ namespace WhisperHime.Commands
                         continue;
                     if (Util.IsImageTooLarge(filePath))
                         continue;
+
+                    await SeTuBll.ImgCompress(filePath);
 
                     var msg = SoraSegment.Text($"来源：https://www.pixiv.net/artworks/{item.Pid}\n")
                             + SoraSegment.Text($"标题：{item.Title}\n")
