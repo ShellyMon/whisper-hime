@@ -12,32 +12,39 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reactive;
+using WhisperHime.Tools;
+
 namespace WhisperHime.Commands
 {
     [CommandSeries]
     public class BGM
     {
-        [SoraCommand(CommandExpressions = new[] { "每日放送" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
+        [SoraCommand(CommandExpressions = new[] { "每日放送" }, MatchType = Sora.Enumeration.MatchType.Full, SourceType = SourceFlag.Group)]
         public static async ValueTask GroupGetBGManime(GroupMessageEventArgs ev)
         {
+
             var result = await ImageDownloadService.GetBgmAnimeCalendar();
 
             var messages = new List<MessageBody>();
 
-            var DayOfWeek = (long)DateTime.Now.DayOfWeek;
+            var DayOfWeek = Util.DayOfWeek();
 
             var fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BGM", $"bgmlist{DayOfWeek}.png");
+
+            var fullPath2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BGM", $"mikanani{DayOfWeek}.png");
             // 检查缓存
             if (!File.Exists(fullPath))
             {
                 BGMBll.PageScreenshot("https://bgmlist.com/", fullPath);
             }
 
+        
             foreach (var weekMsg in result) {
 
                 var weekDayCn = weekMsg.Weekday.Cn;
 
-                if (weekMsg.Weekday.Id == (long)DateTime.Now.DayOfWeek)
+                if (weekMsg.Weekday.Cn == DayOfWeek)
                 {
                     messages.Add(weekDayCn);
 

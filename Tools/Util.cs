@@ -109,5 +109,36 @@ namespace WhisperHime.Tools
             }
 
         }
+
+        public static string DayOfWeek()
+        {
+            string week = string.Empty;
+            string enweek = DateTime.Today.DayOfWeek.ToString();
+            switch (enweek)
+            {
+                case "Monday":
+                    week = "星期一";
+                    break;
+                case "Tuesday":
+                    week = "星期二";
+                    break;
+                case "Wednesday":
+                    week = "星期三";
+                    break;
+                case "Thursday":
+                    week = "星期四";
+                    break;
+                case "Friday":
+                    week = "星期五";
+                    break;
+                case "Saturday":
+                    week = "星期六";
+                    break;
+                case "Sunday":
+                    week = "星期日";
+                    break;
+            }
+            return week;
+        }
     }
 }
