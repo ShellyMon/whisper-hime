@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.ColorSpaces;
 
 namespace WhisperHime.BLL
 {
@@ -118,11 +119,25 @@ namespace WhisperHime.BLL
                     logger.LogInformation("压缩图片 {}", fullPath);
 
                     // 重新压缩图片，改变HASH
-                    using (Image<Rgb24> imgObj = (Image<Rgb24>)await Image.LoadAsync(fullPath))
+                    using (var imgObj = await Image.LoadAsync(fullPath))
                     {
                         var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level2 };
-                        var RGB24of0_0 = imgObj[0, 0];
-                        imgObj[0, 0] = new Rgb24((byte)(RGB24of0_0.R-3), (byte)(RGB24of0_0.G-3),(byte)(RGB24of0_0.B-3));
+                        var BitsPerPixel = imgObj.PixelType.BitsPerPixel;
+
+                        if (BitsPerPixel == 24)
+                        {
+                            var imgRgb24  = (Image<Rgb24>)imgObj;
+                            var RGB24of0_0 = imgRgb24[0,0];
+                            RGB24of0_0 = new Rgb24((byte)(RGB24of0_0.R - 3), (byte)(RGB24of0_0.G - 3), (byte)(RGB24of0_0.B - 3));
+                        }
+
+                        if (BitsPerPixel == 32)
+                        {
+                            var imgRgba32 = (Image<Rgba32>)imgObj;
+                            var RGB32of0_0 = imgRgba32[0, 0];
+                            RGB32of0_0 = new Rgba32(RGB32of0_0.R - 3,RGB32of0_0.G - 3,RGB32of0_0.B - 3,100);
+                        }
+
                         await imgObj.SaveAsync(fullPath, encoder);
                     }
 

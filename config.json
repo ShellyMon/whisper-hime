@@ -2,7 +2,7 @@
   "WhisperHimeSettings": {
     "Database": "database.dat",
     "Pixiv": {
-      "Proxy": "socks5://127.0.0.1:50000"
+      "Proxy": "socks5://127.0.0.1:10808"
     }
   }
 }
