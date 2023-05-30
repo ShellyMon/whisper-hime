@@ -127,18 +127,18 @@ namespace WhisperHime.BLL
                         if (BitsPerPixel == 24)
                         {
                             var imgRgb24  = (Image<Rgb24>)imgObj;
-                            var RGB24of0_0 = imgRgb24[0,0];
-                            RGB24of0_0 = new Rgb24((byte)(RGB24of0_0.R - 3), (byte)(RGB24of0_0.G - 3), (byte)(RGB24of0_0.B - 3));
+                            imgRgb24[0,0] = new Rgb24(0xFF, 0xFF, 0xFF);
+                            await imgRgb24.SaveAsync(fullPath, encoder);
                         }
 
                         if (BitsPerPixel == 32)
                         {
                             var imgRgba32 = (Image<Rgba32>)imgObj;
-                            var RGB32of0_0 = imgRgba32[0, 0];
-                            RGB32of0_0 = new Rgba32(RGB32of0_0.R - 3,RGB32of0_0.G - 3,RGB32of0_0.B - 3,100);
+                            imgRgba32[0, 0] = new Rgba32(0xFF, 0xFF, 0xFF, 100);
+                            await imgRgba32.SaveAsync(fullPath, encoder);
                         }
 
-                        await imgObj.SaveAsync(fullPath, encoder);
+                        //await imgObj.SaveAsync(fullPath, encoder);
                     }
 
                     logger.LogInformation("完成");

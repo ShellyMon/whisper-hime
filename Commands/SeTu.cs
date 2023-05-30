@@ -257,7 +257,7 @@ namespace WhisperHime.Commands
                 // 用关键词检索
 
                 sb.Clear();
-                sb.Append($"https://api.lolicon.app/setu/v2?&r18=2&excludeAI=true&num={num}");
+                sb.Append($"https://api.lolicon.app/setu/v2?&r18=0&excludeAI=true&num={num}");
 
                 if (tags.Length == 0)
                 {
