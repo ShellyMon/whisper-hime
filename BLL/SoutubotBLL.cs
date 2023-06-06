@@ -14,16 +14,16 @@ namespace WhisperHime.BLL
 {
     public class SoutubotBLL
     {
-        internal static async Task<(string, string)> DownloadSoutubotImageAsync(string url)
+        internal static async Task<(string, string)> DownloadSoutubotImageAsync(string url,string saveName)
         {
             var logger = Ioc.Require<ILogger<SeTuBll>>();
 
 
             var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "soutubot-local");
-            var saveName =  Path.GetFileName(Path.GetDirectoryName(url)) + ".jpg";
+             saveName += ".webp";
             var filePath = Path.Combine(saveDirPath, saveName);
             
-                
+
             // 检查缓存
             if (!File.Exists(filePath))
             {
@@ -40,6 +40,8 @@ namespace WhisperHime.BLL
                     logger.LogError("图片下载失败");
                     return (saveName, string.Empty);
                 }
+
+                await SeTuBll.ImgCompress(filePath);
             }
 
             if (File.Exists(filePath))

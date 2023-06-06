@@ -28,7 +28,7 @@ namespace WhisperHime.Commands
             foreach (var item in ImageList)
             {
                 var netWorkUrl = item.Url;
-                var path = await SoutubotBLL.DownloadSoutubotImageAsync(netWorkUrl);
+                var path = await SoutubotBLL.DownloadSoutubotImageAsync(netWorkUrl, Path.GetFileName(Path.GetDirectoryName(netWorkUrl)));
 
                 if (string.IsNullOrEmpty(path.Item2))
                 {
@@ -41,15 +41,15 @@ namespace WhisperHime.Commands
 
                 foreach (var res in SoutubotList.Data)
                 {
-                    if (res.Similarity > 65)
+                    if (res.Similarity > 50)
                     {
-                        var PreviewPath = await SoutubotBLL.DownloadSoutubotImageAsync(res.PreviewImageUrl.AbsoluteUri);
+                        var PreviewPath = await SoutubotBLL.DownloadSoutubotImageAsync(res.PreviewImageUrl.AbsoluteUri, res.Source+res.Title+res.Language+res.Similarity);
 
                         var msg = SoraSegment.Text($"来源：{res.Source}\n")
                             + SoraSegment.Text($"标题：{res.Title}\n")
+                            + SoraSegment.Text($"地址：https://nhentai.net{res.SubjectPath}\n")
                             + SoraSegment.Text($"语言：{res.Language}\n")
                             + SoraSegment.Text($"相似度：{res.Similarity}\n")
-                            + SoraSegment.Text($"地址：https://nhentai.net{res.SubjectPath}\n")
                             + SoraSegment.Image(PreviewPath.Item2);
                         messages.Add(msg);
                     }

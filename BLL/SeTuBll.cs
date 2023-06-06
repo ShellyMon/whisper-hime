@@ -73,27 +73,6 @@ namespace WhisperHime.BLL
                     return (url, string.Empty, tag);
                 }
 
-                //if (File.Exists(fullPath))
-                //{
-                //    try
-                //    {
-                //        logger.LogInformation("压缩图片 {}", fullPath);
-
-                //        // 重新压缩图片，改变HASH
-                //        using (var imgObj = await Image.LoadAsync(fullPath))
-                //        {
-                //            var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.BestSpeed };
-                //            await imgObj.SaveAsync(fullPath, encoder);
-                //        }
-
-                //        logger.LogInformation("完成");
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        logger.LogError(e, "图片压缩失败");
-                //    }
-                //}
-
                 await ImgCompress(fullPath);
             }
 
@@ -126,19 +105,19 @@ namespace WhisperHime.BLL
 
                         if (BitsPerPixel == 24)
                         {
-                            var imgRgb24  = (Image<Rgb24>)imgObj;
-                            imgRgb24[0,0] = new Rgb24(0xFF, 0xFF, 0xFF);
+                            var imgRgb24 = (Image<Rgb24>)imgObj;
+                            imgRgb24[0, 0] = new Rgb24((byte)(imgRgb24[0, 0].R - 1 < 0 ? 0 : 0), 0xFF, 0xFF);
                             await imgRgb24.SaveAsync(fullPath, encoder);
                         }
 
                         if (BitsPerPixel == 32)
                         {
                             var imgRgba32 = (Image<Rgba32>)imgObj;
-                            imgRgba32[0, 0] = new Rgba32(0xFF, 0xFF, 0xFF, 100);
+                            imgRgba32[0, 0] = new Rgba32((byte)(imgRgba32[0, 0].R - 1 < 0 ? 0 : 0), 0xFF, 0xFF, 100);
                             await imgRgba32.SaveAsync(fullPath, encoder);
                         }
 
-                        //await imgObj.SaveAsync(fullPath, encoder);
+                        await imgObj.SaveAsync(fullPath, encoder);
                     }
 
                     logger.LogInformation("完成");
@@ -148,6 +127,6 @@ namespace WhisperHime.BLL
                     logger.LogError(e, "图片压缩失败");
                 }
             }
-        } 
+        }
     }
 }

@@ -62,7 +62,7 @@ namespace WhisperHime.Basics
                 else if (status == "error")
                 {
                     // 删除失败记录
-                    await _ariaClient.RemoveDownloadResultAsync(gid);
+                   // await _ariaClient.RemoveDownloadResultAsync(gid);
 
                     logger.LogError("文件 {} 下载失败", url);
                     break;
