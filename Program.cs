@@ -142,35 +142,6 @@ namespace Sora
             //    await eventArgs.Reply("坏耶");
             //});
 
-            //bot.Event.CommandManager.RegisterPrivateDynamicCommand(new[] { "测试" },
-            //    async eventArge =>
-            //    {
-            //        var CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36";
-
-            //        var datenow =(DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
-
-            //        var api_key = WhisperHime.Tools.Util.ComputeApiKey(datenow, CHROME_UA.Length);
-
-            //        HttpClient client = new HttpClient();
-            //        var filePath = @"D:\1122.jpg";//下载文件，返回文件目录
-
-            //        var content = new MultipartFormDataContent();
-
-            //        content.Headers.Add("x-api-key", api_key);
-            //        content.Headers.Add("x-requested-with", "XMLHttpRequest");
-
-            //        content.Add(new StringContent("1.2"), "factor");
-            //        content.Add(new ByteArrayContent(System.IO.File.ReadAllBytes(filePath)), "file","1122");
-
-            //        var requestUri = "https://soutubot.moe/api/search";
-            //        var result = await client.PostAsync(requestUri, content).Result.Content.ReadAsStringAsync();
-
-            //        var json = Bot.FromJson(result);
-
-            //        await eventArge.Reply("好耶");
-
-            //    });
-
             // 启动Bot
             logger.LogInformation("Startup");
 
