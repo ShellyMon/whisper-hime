@@ -89,12 +89,17 @@ namespace WhisperHime.Commands
                             + SoraSegment.Text($"作者：{item.Artist}\n")
                             + SoraSegment.Image(filePath);
 
-                    var (status, _) = await ev.Reply(msg);
-
-                    if (status.RetCode != ApiStatusType.Ok)
+                    _ = Task.Run(async () =>
                     {
-                        await ev.Reply($"消息发送失败");
-                    }
+                        var (status, _) = await ev.Reply(msg);
+
+                        if (status.RetCode != ApiStatusType.Ok)
+                        {
+                            await ev.Reply($"消息发送失败");
+                        }
+                    });
+
+                    
                 }
             }
             else

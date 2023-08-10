@@ -17,7 +17,7 @@ namespace WhisperHime.BLL
             try
             {
                 ChromeOptions options = new ChromeOptions();
-                options.AddArguments("headless", "disable-gpu", "--proxy-server=http://127.0.0.1:10809");
+                options.AddArguments("headless", "--proxy-server=http://127.0.0.1:10809");
                 driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), options);
                 driver.Navigate().GoToUrl(url);
                 string width = driver.ExecuteScript("return document.body.scrollWidth").ToString();

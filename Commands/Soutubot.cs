@@ -21,56 +21,56 @@ namespace WhisperHime.Commands
     public class Soutubot
     {
 
-        [SoraCommand(CommandExpressions = new[] { "搜本" }, MatchType = Sora.Enumeration.MatchType.KeyWord, SourceType = SourceFlag.Group)]
-        public static async ValueTask GroupGetSoutubot(GroupMessageEventArgs ev)
-        {
-            var ImageList = ev.Message.GetAllImage();
-            foreach (var item in ImageList)
-            {
-                var netWorkUrl = item.Url;
-                var path = await SoutubotBLL.DownloadSoutubotImageAsync(netWorkUrl, Path.GetFileName(Path.GetDirectoryName(netWorkUrl)));
+        //[SoraCommand(CommandExpressions = new[] { "搜本" }, MatchType = Sora.Enumeration.MatchType.KeyWord, SourceType = SourceFlag.Group)]
+        //public static async ValueTask GroupGetSoutubot(GroupMessageEventArgs ev)
+        //{
+        //    var ImageList = ev.Message.GetAllImage();
+        //    foreach (var item in ImageList)
+        //    {
+        //        var netWorkUrl = item.Url;
+        //        var path = await SoutubotBLL.DownloadSoutubotImageAsync(netWorkUrl, Path.GetFileName(Path.GetDirectoryName(netWorkUrl)));
 
-                if (string.IsNullOrEmpty(path.Item2))
-                {
-                    await ev.Reply("图片文件失踪了");
-                    return;
-                }
+        //        if (string.IsNullOrEmpty(path.Item2))
+        //        {
+        //            await ev.Reply("图片文件失踪了");
+        //            return;
+        //        }
 
-                var SoutubotList = await SoutubotBLL.RequestApiDataAsync(path.Item1, path.Item2);
-                var messages = new List<MessageBody>(SoutubotList.Data.Count());
+        //        var SoutubotList = await SoutubotBLL.RequestApiDataAsync(path.Item1, path.Item2);
+        //        var messages = new List<MessageBody>(SoutubotList.Data.Count());
 
-                foreach (var res in SoutubotList.Data)
-                {
-                    if (res.Similarity > 50)
-                    {
-                        var PreviewPath = await SoutubotBLL.DownloadSoutubotImageAsync(res.PreviewImageUrl.AbsoluteUri, res.Source+res.Title+res.Language+res.Similarity);
+        //        foreach (var res in SoutubotList.Data)
+        //        {
+        //            if (res.Similarity > 50)
+        //            {
+        //                var PreviewPath = await SoutubotBLL.DownloadSoutubotImageAsync(res.PreviewImageUrl.AbsoluteUri, res.Source + res.Title + res.Language + res.Similarity);
 
-                        var msg = SoraSegment.Text($"来源：{res.Source}\n")
-                            + SoraSegment.Text($"标题：{res.Title}\n")
-                            + SoraSegment.Text($"地址：https://nhentai.net{res.SubjectPath}\n")
-                            + SoraSegment.Text($"语言：{res.Language}\n")
-                            + SoraSegment.Text($"相似度：{res.Similarity}\n")
-                            + SoraSegment.Image(PreviewPath.Item2);
-                        messages.Add(msg);
-                    }
-                }
-                if (messages.Count == 0)
-                {
-                    await ev.SourceGroup.SendGroupMessage("未查找到结果");
-                    return;
-                }
+        //                var msg = SoraSegment.Text($"来源：{res.Source}\n")
+        //                    + SoraSegment.Text($"标题：{res.Title}\n")
+        //                    + SoraSegment.Text($"地址：https://nhentai.net{res.SubjectPath}\n")
+        //                    + SoraSegment.Text($"语言：{res.Language}\n")
+        //                    + SoraSegment.Text($"相似度：{res.Similarity}\n")
+        //                    + SoraSegment.Image(PreviewPath.Item2);
+        //                messages.Add(msg);
+        //            }
+        //        }
+        //        if (messages.Count == 0)
+        //        {
+        //            await ev.SourceGroup.SendGroupMessage("未查找到结果");
+        //            return;
+        //        }
 
-                var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
+        //        var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
 
-                var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
+        //        var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
 
-                if (status.RetCode != ApiStatusType.Ok)
-                {
-                    await ev.SourceGroup.SendGroupMessage("消息发送失败");
-                }
+        //        if (status.RetCode != ApiStatusType.Ok)
+        //        {
+        //            await ev.SourceGroup.SendGroupMessage("消息发送失败");
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
     }
 }

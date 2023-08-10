@@ -72,9 +72,7 @@ namespace WhisperHime.Tools
         internal static string ComputeApiKey(long key1, long key2)
         {
             var key = Convert.ToInt64(Math.Pow(key1, 2) + Math.Pow(key2, 2));
-            //var key = Encoding.UTF8.GetBytes(((Math.Pow(key1, 2) + Math.Pow(key2, 2))).ToString());
             key -= key % 100;
-            //return new string(Convert.ToBase64String(key).TakeWhile(x => x != '=').Reverse().ToArray());
             return new string(Convert.ToBase64String(Encoding.ASCII.GetBytes(key.ToString())).TakeWhile(x => x != '=').Reverse().ToArray());
         }
 
@@ -125,7 +123,6 @@ namespace WhisperHime.Tools
             {
                 throw;
             }
-
         }
 
         public static string DayOfWeek()

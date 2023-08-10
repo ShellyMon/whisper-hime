@@ -1,9 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -69,7 +73,7 @@ namespace WhisperHime.BLL
 
 
 
-            content.Headers.Add("Cookie", "_ga=GA1.1.125127865.1681439188; _ga_JB369TC9SF=GS1.1.1685950996.8.1.1685951322.0.0.0");
+            content.Headers.Add("Cookie", "\r\n_ga=GA1.1.125127865.1681439188; cf_clearance=g7HPa4yEWUQSzKsebH74QkrHgTEBg0WSUwMus6iYZ6E-1686643829-0-160; _ga_JB369TC9SF=GS1.1.1686643225.11.1.1686643843.0.0.0");
             content.Headers.Add("Origin", "https://soutubot.moe/");
             content.Headers.Add("x-api-key", api_key);
             content.Headers.Add("x-requested-with", "XMLHttpRequest");
