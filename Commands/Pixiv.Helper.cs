@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace WhisperHime.Commands
 {
     public partial class Pixiv
     {
-        private static async Task<MessageBody> DownPixivRank(Illust imagePage, Sora.EventArgs.SoraEvent.GroupMessageEventArgs ev)
+        private static async Task<MessageBody> DownPixivRank(Illust imagePage, Sora.EventArgs.SoraEvent.BaseMessageEventArgs ev)
         {
             if (imagePage.MetaPages.Length > 0)
             {
@@ -36,17 +37,21 @@ namespace WhisperHime.Commands
 
                     tasks.Add(SeTuBll.DownloadPixivImageAsync(url));
 
-                    var paths = await Task.WhenAll(tasks);
-                    foreach (var path in paths)
-                    {
-                        if (string.IsNullOrEmpty(path.Item2))
-                            continue;
-                        if (Util.IsImageTooLarge(path.Item2))
-                            continue;
-
-                        msg += SoraSegment.Image(path.Item2);
-                    }
+                    
                 }
+
+                var paths = await Task.WhenAll(tasks);
+
+                foreach (var path in paths)
+                {
+                    if (string.IsNullOrEmpty(path.Item2))
+                        continue;
+                    if (Util.IsImageTooLarge(path.Item2))
+                        continue;
+
+                    msg += SoraSegment.Image(path.Item2);
+                }
+
                 return msg;
             }
             else

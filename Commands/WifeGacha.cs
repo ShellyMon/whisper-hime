@@ -17,14 +17,8 @@ namespace WhisperHime.Commands
     [CommandSeries]
     public class WifeGacha
     {
-        [SoraCommand(CommandExpressions = new[] { "抽老婆" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Group)]
-        public static async ValueTask GroupWifeGacha(GroupMessageEventArgs ev)
-        {
-            await DoWifeGachaAsync(ev);
-        }
-
-        [SoraCommand(CommandExpressions = new[] { "抽老婆" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = SourceFlag.Private)]
-        public static async ValueTask PrivateWifeGacha(PrivateMessageEventArgs ev)
+        [SoraCommand(CommandExpressions = new[] { "抽老婆" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = MessageSourceMatchFlag.All)]
+        public static async ValueTask GroupWifeGacha(BaseMessageEventArgs ev)
         {
             await DoWifeGachaAsync(ev);
         }

@@ -112,7 +112,7 @@ namespace Sora
             {
                 CommandExceptionHandle = HandleBotCommandException,
                 SendCommandErrMsg = false,
-                ApiTimeOut = TimeSpan.FromSeconds(30),
+                ApiTimeOut = TimeSpan.FromSeconds(180),
             });
 
             //bot.Event.CommandManager.RegisterPrivateDynamicCommand(

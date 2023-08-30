@@ -20,8 +20,8 @@ namespace WhisperHime.Commands
     [CommandSeries]
     public class BGM
     {
-        [SoraCommand(CommandExpressions = new[] { "每日放送" }, MatchType = Sora.Enumeration.MatchType.Full, SourceType = SourceFlag.Group)]
-        public static async ValueTask GroupGetBGManime(GroupMessageEventArgs ev)
+        [SoraCommand(CommandExpressions = new[] { "每日放送" }, MatchType = Sora.Enumeration.MatchType.Full, SourceType = MessageSourceMatchFlag.All)]
+        public static async ValueTask GroupGetBGManime(BaseMessageEventArgs ev)
         {
 
             var result = await ImageDownloadService.GetBgmAnimeCalendar();
@@ -63,19 +63,47 @@ namespace WhisperHime.Commands
                     }
                 }
             }
-            var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
 
-            var mgs = SoraSegment.At(ev.Sender)
-                     +SoraSegment.Image(fullPath);
-
-            await ev.Reply(mgs);
-
-            var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
-
-            if (status.RetCode != ApiStatusType.Ok)
+            if (ev.SourceType == Sora.Enumeration.SourceFlag.Group)
             {
-                await ev.SourceGroup.SendGroupMessage("消息发送失败");
+
+                var ee = ev as GroupMessageEventArgs;
+
+                var forwardMsg = messages.Select(msg => new CustomNode(ee.SenderInfo.Nick, ee.SenderInfo.UserId, msg));
+
+                var (status, d, c) = await ee.SourceGroup.SendGroupForwardMsg(forwardMsg);
+
+                if (status.RetCode != ApiStatusType.Ok)
+                {
+                    await ee.Reply($"消息发送失败");
+                }
             }
+
+            if (ev.SourceType == Sora.Enumeration.SourceFlag.Private)
+            {
+                var forwardMsg = messages.Select(msg => new CustomNode("涩涩人", ev.Sender.Id, msg));
+
+                var (status, d) = await ev.SoraApi.SendPrivateForwardMsg(ev.Sender.Id, forwardMsg);
+
+                if (status.RetCode != ApiStatusType.Ok)
+                {
+                    await ev.Reply($"消息发送失败");
+                }
+            }
+
+            //var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
+
+            //var mgs = SoraSegment.At(ev.Sender)
+            //         +SoraSegment.Image(fullPath);
+
+            //await ev.Reply(mgs);
+
+            //var (status, _, _) = await ev.SourceGroup.SendGroupForwardMsg(forwardMsg);
+
+            //if (status.RetCode != ApiStatusType.Ok)
+            //{
+            //    await ev.SourceGroup.SendGroupMessage("消息发送失败");
+            //}
             
 
         }

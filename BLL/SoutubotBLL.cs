@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using WhisperHime.Basics;
 using WhisperHime.Dto.soutubot;
+using Newtonsoft.Json;
 
 namespace WhisperHime.BLL
 {
@@ -59,21 +60,59 @@ namespace WhisperHime.BLL
             }
         }
 
+        internal static async Task TaskAsync()
+        {
+            var url = "http://127.0.0.1:8191/v1";
+            var jsonObj = new { cmd = "request.get", url = "https://soutubot.moe/" , maxTimeout = 60000 };
+            string json = JsonConvert.SerializeObject(jsonObj);
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    var responseJson = SoutuBotMods.FromJson(responseBody);
+                    string cookic = "";
+
+                    foreach (var item in responseJson.Solution.Cookies)
+                    {
+                        cookic += $"{item.Name}={item.Value};";
+                    }
+                    Cookie = cookic;
+                    CHROME_UA = responseJson.Solution.UserAgent;
+
+
+
+                    // 在这里处理响应
+                }
+                else
+                {
+                    // 处理错误
+                }
+            }
+        }
+
+        public static string CHROME_UA = "";
+        public static string Cookie = "";
+
         internal static async Task<Bot> RequestApiDataAsync(string saveName, string filePath)
         {
-            var CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
-            var datenow = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
+            var datenow = (DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000;//获取时间戳，精确到分钟
             var api_key = WhisperHime.Tools.Util.ComputeApiKey(datenow, CHROME_UA.Length);
 
             HttpClient client = new HttpClient();
 
             client.DefaultRequestHeaders.Referrer = new Uri("https://soutubot.moe/");
             var content = new MultipartFormDataContent();
+
             client.DefaultRequestHeaders.Add("User-Agent", CHROME_UA);
 
-
-
-            content.Headers.Add("Cookie", "\r\n_ga=GA1.1.125127865.1681439188; cf_clearance=g7HPa4yEWUQSzKsebH74QkrHgTEBg0WSUwMus6iYZ6E-1686643829-0-160; _ga_JB369TC9SF=GS1.1.1686643225.11.1.1686643843.0.0.0");
+            content.Headers.Add("Cookie", Cookie);
             content.Headers.Add("Origin", "https://soutubot.moe/");
             content.Headers.Add("x-api-key", api_key);
             content.Headers.Add("x-requested-with", "XMLHttpRequest");
