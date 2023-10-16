@@ -63,14 +63,14 @@ namespace WhisperHime.BLL
         internal static async Task TaskAsync()
         {
             var url = "http://127.0.0.1:8191/v1";
-            var jsonObj = new { cmd = "request.get", url = "http://soutubot.moe/" , maxTimeout = 60000};
+            var jsonObj = new { cmd = "request.get", url = "https://soutubot.moe/" , maxTimeout = 60000 };
             string json = JsonConvert.SerializeObject(jsonObj);
             using (HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = await client.PostAsync(url, new StringContent(json, Encoding.UTF8, "application/json"));
+                HttpResponseMessage response = await client.PostAsync(url, new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -83,8 +83,12 @@ namespace WhisperHime.BLL
                     {
                         cookic += $"{item.Name}={item.Value};";
                     }
-                    //Cookie = cookic;
+                    Cookie = cookic;
                     CHROME_UA = responseJson.Solution.UserAgent;
+
+
+
+                    // 在这里处理响应
                 }
                 else
                 {
@@ -93,8 +97,8 @@ namespace WhisperHime.BLL
             }
         }
 
-        public static string CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36";
-        //public static string Cookie = "";
+        public static string CHROME_UA = "";
+        public static string Cookie = "";
 
         internal static async Task<Bot> RequestApiDataAsync(string saveName, string filePath)
         {
@@ -106,13 +110,13 @@ namespace WhisperHime.BLL
             client.DefaultRequestHeaders.Referrer = new Uri("https://soutubot.moe/");
             var content = new MultipartFormDataContent();
 
-            client.DefaultRequestHeaders.Add("User-Agent", CHROME_UA); 
-            client.DefaultRequestHeaders.Add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,ja;q=0.6,eo;q=0.5,en-CA;q=0.4,en-AU;q=0.3,en-US;q=0.2,en-ZA;q=0.1,en-NZ;q=0.1,en-IN;q=0.1,en-GB-oxendict;q=0.1,en-GB;q=0.1,zh-HK;q=0.1");
+            client.DefaultRequestHeaders.Add("User-Agent", CHROME_UA);
 
-            //content.Headers.Add("Cookie", Cookie);
+            content.Headers.Add("Cookie", Cookie);
             content.Headers.Add("Origin", "https://soutubot.moe/");
             content.Headers.Add("x-api-key", api_key);
             content.Headers.Add("x-requested-with", "XMLHttpRequest");
+
 
             content.Add(new StringContent("1.2"), "factor");
             content.Add(new ByteArrayContent(System.IO.File.ReadAllBytes(filePath)), "file", saveName);
