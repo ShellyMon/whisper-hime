@@ -10,6 +10,10 @@ using System.IO;
 using System.Threading.Tasks;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.ColorSpaces;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
 
 namespace WhisperHime.BLL
 {
@@ -100,7 +104,22 @@ namespace WhisperHime.BLL
                     // 重新压缩图片，改变HASH
                     using (var imgObj = await Image.LoadAsync(fullPath))
                     {
-                        var encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level2 };
+
+                        IImageEncoder encoder;
+
+                        string extension = System.IO.Path.GetExtension(fullPath).ToLower();
+                        if (extension == ".jpg" || extension == ".jpeg")
+                        {
+                            encoder = new JpegEncoder
+                            {
+                                Quality = 100 // 设置输出图像的质量为最高，这里是100
+                            };
+                        }
+                        else
+                        {
+                            encoder = new PngEncoder() { CompressionLevel = PngCompressionLevel.Level2 };
+                        }
+
                         var BitsPerPixel = imgObj.PixelType.BitsPerPixel;
 
                         if (BitsPerPixel == 24)
