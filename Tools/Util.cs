@@ -71,7 +71,7 @@ namespace WhisperHime.Tools
         /// <returns></returns>
         internal static string ComputeApiKey(long key1, long key2)
         {
-            var key = Convert.ToInt64(Math.Pow(key1, 2) + Math.Pow(key2, 2));
+            var key = Convert.ToInt64(Math.Pow(key1, 2) + Math.Pow(key2, 2) + 2032438004496);
             key -= key % 100;
             return new string(Convert.ToBase64String(Encoding.ASCII.GetBytes(key.ToString())).TakeWhile(x => x != '=').Reverse().ToArray());
         }

@@ -142,7 +142,7 @@ namespace WhisperHime.Commands
                 // 通过API检索
 
                 var sb = new StringBuilder(128);
-                var r18 = ev.SourceType == SourceFlag.Private ? 2 : ev.SourceType == SourceFlag.Group ? 2 : 0;
+                var r18 = ev.SourceType == SourceFlag.Private ? 2 : ev.SourceType == SourceFlag.Group ? 0 : 0;
                 sb.Append($"https://api.lolicon.app/setu/v2?&r18={r18}&excludeAI=true&num={num}");
 
                 foreach (var tag in tags)
