@@ -77,6 +77,11 @@ namespace WhisperHime.Commands
                 {
                     await ee.Reply($"消息发送失败");
                 }
+
+                var mgs = SoraSegment.At(ev.Sender)
+                         + SoraSegment.Image(fullPath);
+
+                await ev.Reply(mgs);
             }
 
             if (ev.SourceType == Sora.Enumeration.SourceFlag.Private)
@@ -89,6 +94,11 @@ namespace WhisperHime.Commands
                 {
                     await ev.Reply($"消息发送失败");
                 }
+
+                var mgs = SoraSegment.At(ev.Sender)
+                         + SoraSegment.Image(fullPath);
+
+                await ev.Reply(mgs);
             }
 
             //var forwardMsg = messages.Select(msg => new CustomNode(ev.SenderInfo.Nick, ev.SenderInfo.UserId, msg));
