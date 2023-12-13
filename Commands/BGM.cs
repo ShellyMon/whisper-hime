@@ -78,10 +78,10 @@ namespace WhisperHime.Commands
                     await ee.Reply($"消息发送失败");
                 }
 
-                var mgs = SoraSegment.At(ev.Sender)
-                         + SoraSegment.Image(fullPath);
+                //var mgs = SoraSegment.At(ev.Sender)
+                //         + SoraSegment.Image(fullPath);
 
-                await ev.Reply(mgs);
+                //await ev.Reply(mgs);
             }
 
             if (ev.SourceType == Sora.Enumeration.SourceFlag.Private)
