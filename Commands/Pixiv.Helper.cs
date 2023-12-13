@@ -36,8 +36,6 @@ namespace WhisperHime.Commands
                         continue;
 
                     tasks.Add(SeTuBll.DownloadPixivImageAsync(url));
-
-                    
                 }
 
                 var paths = await Task.WhenAll(tasks);

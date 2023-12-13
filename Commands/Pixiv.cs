@@ -105,9 +105,15 @@ namespace WhisperHime.Commands
             }
         }
 
-        [SoraCommand(CommandExpressions = new[] { "^\\.add (\\d+?)$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = MessageSourceMatchFlag.All, SuperUserCommand = false)]
+        [SoraCommand(CommandExpressions = new[] { "^\\.add (\\d+?)$" }, MatchType = Sora.Enumeration.MatchType.Regex, SourceType = MessageSourceMatchFlag.All, SuperUserCommand = false, Priority = 10)]
         public static async ValueTask AddImageToDatabaseByPidG(BaseMessageEventArgs ev)
         {
+
+            var xpImageData = SeTuBll.GetXPImageFromDatabase(ev.Sender.Id);
+            var fullPath = xpImageData != null ? $"img-XP/{xpImageData.xpName}/" : $"img-local/";
+
+
+
             // 解析参数
             var match = ev.CommandRegex[0].MatchResult(ev.Message.GetText());
 
@@ -115,7 +121,6 @@ namespace WhisperHime.Commands
             var pid = long.Parse(match[1]);
             // 获取图片详情
             var image = await PixivBll.GetImageByPidAsync(pid);
-
             if (image == null)
             {
                 await ev.Reply("找不到图片");
@@ -123,7 +128,6 @@ namespace WhisperHime.Commands
             }
 
             await ev.Reply("图片信息获取成功，开始下载图片...");
-
             // 该作品的所有图片
             var illusts = new List<Illustration>();
 
@@ -143,7 +147,7 @@ namespace WhisperHime.Commands
                     if (string.IsNullOrEmpty(url))
                         continue;
 
-                    tasks.Add(SeTuBll.DownloadPixivImageAsync(url));
+                    tasks.Add(SeTuBll.DownloadPixivImageAsync(url, null, $"{fullPath}{image.User.Name}"));
                 }
 
                 var paths = await Task.WhenAll(tasks);
@@ -153,13 +157,17 @@ namespace WhisperHime.Commands
                     if (string.IsNullOrEmpty(path.Item2))
                         continue;
 
+                    var Tags = image.Tags.Select(x => x.Name).ToList();
+                    if (xpImageData != null)
+                        Tags.Add(xpImageData.xpName);
+
                     illusts.Add(new Illustration
                     {
                         Pid = image.Id,
                         p = image.p,
                         Title = image.Title,
                         Description = image.Caption,
-                        Tags = image.Tags.Select(x => x.Name).ToList(),
+                        Tags = Tags,
                         IsAdult = image.XRestrict != 0,
                         Url = path.Item1,
                         Uid = image.User.Id,
@@ -178,13 +186,16 @@ namespace WhisperHime.Commands
                     return;
                 }
 
-                var path = await SeTuBll.DownloadPixivImageAsync(url);
+                var path = await SeTuBll.DownloadPixivImageAsync(url, null, $"img-local/{image.User.Name}");
 
                 if (string.IsNullOrEmpty(path.Item2))
                 {
                     await ev.Reply("图片文件失踪了");
                     return;
                 }
+                var Tags = image.Tags.Select(x => x.Name).ToList();
+                if (xpImageData != null)
+                    Tags.Add(xpImageData.xpName);
 
                 illusts.Add(new Illustration
                 {
@@ -192,7 +203,7 @@ namespace WhisperHime.Commands
                     p = image.p,
                     Title = image.Title,
                     Description = image.Caption,
-                    Tags = image.Tags.Select(x => x.Name).ToList(),
+                    Tags = Tags,
                     IsAdult = image.XRestrict != 0,
                     Url = url,
                     Uid = image.User.Id,
