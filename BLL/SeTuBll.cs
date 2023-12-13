@@ -14,6 +14,10 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Quantization;
+using Sora.EventArgs.SoraEvent;
+using WhisperHime.Dto.Pixiv;
+using Sora.Entities.Segment.DataModel;
+using Sora.Enumeration.ApiType;
 
 namespace WhisperHime.BLL
 {
@@ -48,7 +52,80 @@ namespace WhisperHime.BLL
             return query.Limit(num).ToList();
         }
 
-        internal static async Task<(string, string, object?)> DownloadPixivImageAsync(string url, object? tag = null)
+        internal static int setXPImageFromDatabase(BaseMessageEventArgs ev,string xpName) 
+        {
+            var db = Ioc.Require<ILiteDatabase>();
+            var col = db.GetCollection<xpImage>("xpImage");
+            col.EnsureIndex(x => x.qq, true);
+
+            if (ev.SourceType == Sora.Enumeration.SourceFlag.Group)
+            {
+                var ee = ev as GroupMessageEventArgs;
+                if (col.Query().Where(x => x.qq == ee.SenderInfo.UserId).ToList().Count > 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    col.Insert(new xpImage()
+                    {
+                        qq = ee.SenderInfo.UserId,
+                        qqName = ee.SenderInfo.Nick,
+                        xpName = xpName
+                    });
+                    return 0;
+                }
+            }
+            return 1;
+        }
+
+        internal static xpImage GetXPImageFromDatabase(long qq)
+        {
+            try
+            {
+                var db = Ioc.Require<ILiteDatabase>();
+                var col = db.GetCollection<xpImage>("xpImage");
+                col.EnsureIndex(x => x.qq, true);
+
+                return col.Query().Where(x => x.qq == qq).First() ?? null;
+            }
+            catch
+            {
+                return null;
+            }
+            
+        }
+
+        internal static xpImage GetXPImageFromDatabase(string xpName)
+        {
+            try
+            {
+                var db = Ioc.Require<ILiteDatabase>();
+                var col = db.GetCollection<xpImage>("xpImage");
+                col.EnsureIndex(x => x.qq, true);
+
+                return col.Query().Where(x => x.xpName == xpName).First() ?? null;
+            }
+            catch
+            {
+                return null;
+            }
+            
+        }
+
+        internal static string ImageMoveAsync(string fullPath,string targetFullPath,string fileName)
+        {
+            var filePath = Path.Combine(targetFullPath, fileName);
+            if (!Directory.Exists(targetFullPath))
+            {
+                Directory.CreateDirectory(targetFullPath);
+            }
+            File.Move(fullPath, filePath);
+
+            return filePath;
+        }
+
+        internal static async Task<(string, string, object?)> DownloadPixivImageAsync(string url, object? tag = null, string filePath = "img-cache",string saveName = "")
         {
             var logger = Ioc.Require<ILogger<SeTuBll>>();
 
@@ -56,8 +133,8 @@ namespace WhisperHime.BLL
                 .Replace("i.pixiv.cat", "i.pximg.net")
                 .Replace("i.pixiv.re", "i.pximg.net");
 
-            var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "img-cache");
-            var saveName = Path.GetFileName(url);
+            var saveDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filePath);
+            saveName = saveName == "" ? Path.GetFileName(url) : saveName;
             var fullPath = Path.Combine(saveDirPath, saveName);
 
             // 检查缓存
@@ -110,10 +187,7 @@ namespace WhisperHime.BLL
                         string extension = System.IO.Path.GetExtension(fullPath).ToLower();
                         if (extension == ".jpg" || extension == ".jpeg")
                         {
-                            encoder = new JpegEncoder
-                            {
-                                Quality = 100 // 设置输出图像的质量为最高，这里是100
-                            };
+                            encoder = new JpegEncoder();
                         }
                         else
                         {

@@ -83,7 +83,7 @@ namespace WhisperHime.BLL
                     {
                         cookic += $"{item.Name}={item.Value};";
                     }
-                    //Cookie = cookic;
+                    Cookie = cookic;
                     CHROME_UA = responseJson.Solution.UserAgent;
                 }
                 else
@@ -94,7 +94,7 @@ namespace WhisperHime.BLL
         }
 
         public static string CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36";
-        //public static string Cookie = "";
+        public static string Cookie = "";
 
         internal static async Task<Bot> RequestApiDataAsync(string saveName, string filePath)
         {
@@ -109,7 +109,7 @@ namespace WhisperHime.BLL
             client.DefaultRequestHeaders.Add("User-Agent", CHROME_UA); 
             client.DefaultRequestHeaders.Add("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,ja;q=0.6,eo;q=0.5,en-CA;q=0.4,en-AU;q=0.3,en-US;q=0.2,en-ZA;q=0.1,en-NZ;q=0.1,en-IN;q=0.1,en-GB-oxendict;q=0.1,en-GB;q=0.1,zh-HK;q=0.1");
 
-            //content.Headers.Add("Cookie", Cookie);
+            content.Headers.Add("Cookie", Cookie);
             content.Headers.Add("Origin", "https://soutubot.moe/");
             content.Headers.Add("x-api-key", api_key);
             content.Headers.Add("x-requested-with", "XMLHttpRequest");
