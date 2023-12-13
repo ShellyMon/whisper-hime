@@ -42,6 +42,11 @@ namespace WhisperHime.Commands
         //        try
         //        {
         //            SoutubotList = await SoutubotBLL.RequestApiDataAsync(path.Item1, path.Item2);
+        //            if (SoutubotList.ImageUrl == null)
+        //            {
+        //                await SoutubotBLL.TaskAsync();
+        //                SoutubotList = await SoutubotBLL.RequestApiDataAsync(path.Item1, path.Item2);
+        //            }
         //        }
         //        catch (Exception)
         //        {
@@ -49,7 +54,7 @@ namespace WhisperHime.Commands
         //            SoutubotList = await SoutubotBLL.RequestApiDataAsync(path.Item1, path.Item2);
         //        }
 
-                
+
         //        var messages = new List<MessageBody>(SoutubotList.Data.Count());
 
         //        foreach (var res in SoutubotList.Data)
