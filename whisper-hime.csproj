@@ -5,6 +5,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>WhisperHime</RootNamespace>
+
+	  <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
